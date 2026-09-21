@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Activation Failed</title>
+    <link rel="stylesheet" href="{% static 'registration/style.css' %}">
+</head>
+<body>
+    <main class="auth-page">
+        <section class="auth-card">
+            <h1>Activation link is invalid or expired</h1>
+            <p class="subtitle">Please register again to receive a new activation link.</p>
+            <a class="main-button" href="{% url 'auth_page' %}">Back to registration</a>
+        </section>
+    </main>
+</body>
+</html>

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
+    {% csrf_token %}
     <main class="auth-page">
 
         <!-- Registration -->
@@ -50,14 +50,12 @@
                 <div class="field">
                     <label>Mobile Number <span>*</span></label>
                     <div class="phone">
-                        <select>
+                        <select id="countryCode">
                             <option>+20</option>
-                            <option>+1</option>
-                            <option>+44</option>
-                            <option>+971</option>
                         </select>
-                        <input type="tel" placeholder="Enter your mobile number" required>
+                        <input type="tel" id="mobileNumber" placeholder="e.g. 01012345678" maxlength="11" pattern="^(010|011|012|015)[0-9]{8}$" required>
                     </div>
+                    <small id="mobileError" class="error"></small>
                 </div>
 
                 <div class="row">
@@ -67,7 +65,6 @@
                             <input id="password" type="password" placeholder="Create a password" required>
                             <button type="button" class="show-password" data-target="password">Show</button>
                         </div>
-                        <small>At least 8 characters</small>
                     </div>
 
                     <div class="field">
