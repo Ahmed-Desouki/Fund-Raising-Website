@@ -16,3 +16,5 @@ db.sqlite3
 # OS files
 .DS_Store
 Thumbs.db
+# Uploaded campaign images (generated locally, e.g. by seed_demo)
+media/project_pics/

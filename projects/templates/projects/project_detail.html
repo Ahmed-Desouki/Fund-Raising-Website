@@ -1,0 +1,151 @@
+{% extends 'projects/base.html' %}
+{% block title %}{{ project.title }} · Fundraiser{% endblock %}
+{% block content %}
+<div class="detail">
+    <div class="detail-main">
+        {% if project.images.all %}
+        <section class="slider gallery-slider">
+            <div class="slides" id="slides">
+                {% for img in project.images.all %}<div class="slide"><img src="{{ img.image.url }}" alt=""></div>{% endfor %}
+            </div>
+            {% if project.images.all|length > 1 %}
+            <button class="slide-btn prev" onclick="slide(-1)" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="slide-btn next" onclick="slide(1)" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+            {% endif %}
+        </section>
+        <script>
+            let current = 0;
+            function slide(dir) {
+                const slides = document.getElementById('slides');
+                current = (current + dir + slides.children.length) % slides.children.length;
+                slides.style.transform = `translateX(-${current * 100}%)`;
+            }
+        </script>
+        {% endif %}
+
+        <span class="card-cat">{{ project.category.name }}</span>
+        <h1 class="page-title">{{ project.title }}</h1>
+        <p class="muted">by {{ project.owner.first_name }} {{ project.owner.last_name }} · {{ project.start_time|date:"M j, Y" }} – {{ project.end_time|date:"M j, Y" }}</p>
+        {% if project.is_cancelled %}<p class="message error">This campaign was cancelled by its owner.</p>{% endif %}
+
+        <div class="prose">{{ project.details|linebreaks }}</div>
+
+        {% if project.tags.all %}
+        <div class="chips">{% for tag in project.tags.all %}<a class="chip" href="{% url 'search' %}?q={{ tag.name|urlencode }}">#{{ tag.name }}</a>{% endfor %}</div>
+        {% endif %}
+
+        <section id="comments">
+            <h2 class="section-title">Comments</h2>
+            {% for comment in comments %}
+                <div class="comment">
+                    {% include 'projects/_comment.html' %}
+                    {% for reply in comment.replies.all %}
+                        <div class="comment reply">{% include 'projects/_comment.html' with comment=reply %}</div>
+                    {% endfor %}
+                    {% if user.is_authenticated %}
+                    <details class="inline-form">
+                        <summary>Reply</summary>
+                        <form method="post" action="{% url 'add_comment' project.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ comment.pk }}">
+                            <textarea name="content" rows="2" required placeholder="Write a reply…"></textarea>
+                            <button class="btn btn-sm btn-primary">Reply</button>
+                        </form>
+                    </details>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="empty">No comments yet.</p>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'add_comment' project.pk %}" class="form">
+                {% csrf_token %}
+                {{ comment_form.content }}
+                <button class="btn btn-primary">Post comment</button>
+            </form>
+            {% endif %}
+        </section>
+    </div>
+
+    <aside class="detail-side">
+        <div class="panel">
+            <p class="raised"><strong>{{ project.total_donations|floatformat:0 }} EGP</strong> raised of {{ project.total_target|floatformat:0 }}</p>
+            <div class="progress"><span style="width: {{ project.progress_percent }}%"></span></div>
+            <p class="muted">{{ project.progress_percent }}% funded · {{ project.average_rating|floatformat:1 }} <i class="fa-solid fa-star"></i> ({{ project.ratings.count }})</p>
+            <div class="stats">
+                <div><strong>{{ project.donor_count }}</strong><span>donor{{ project.donor_count|pluralize }}</span></div>
+                <div><strong>{{ project.days_left }}</strong><span>day{{ project.days_left|pluralize }} left</span></div>
+            </div>
+
+            {% if user.is_authenticated %}
+                {% if project.is_running %}
+                <form method="post" action="{% url 'donate' project.pk %}" class="form">
+                    {% csrf_token %}
+                    <div class="presets">
+                        {% for amount in preset_amounts %}
+                            <button type="button" class="chip" onclick="document.getElementById('id_amount').value = {{ amount }}">{{ amount }} EGP</button>
+                        {% endfor %}
+                    </div>
+                    {{ donation_form.amount }}
+                    <button class="btn btn-primary">Donate</button>
+                </form>
+                {% else %}
+                <p class="muted">This campaign isn't accepting donations right now.</p>
+                {% endif %}
+
+                <form method="post" action="{% url 'rate_project' project.pk %}" class="stars">
+                    {% csrf_token %}
+                    <span class="muted">Your rating:</span>
+                    {% for i in rating_range %}
+                        <button name="value" value="{{ i }}" class="star{% if user_rating and i <= user_rating %} on{% endif %}" aria-label="Rate {{ i }}"><i class="fa-solid fa-star"></i></button>
+                    {% endfor %}
+                </form>
+
+                {% if project.owner == user and project.can_be_cancelled %}
+                <form method="post" action="{% url 'cancel_project' project.pk %}" onsubmit="return confirm('Cancel this campaign? This cannot be undone.');">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm">Cancel campaign</button>
+                </form>
+                {% endif %}
+
+                {% if project.owner != user %}
+                <details class="inline-form">
+                    <summary>Report this campaign</summary>
+                    <form method="post" action="{% url 'report_project' project.pk %}">
+                        {% csrf_token %}
+                        {{ report_form.reason }}
+                        <button class="btn btn-sm btn-danger">Send report</button>
+                    </form>
+                </details>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'auth_page' %}" class="btn btn-primary">Log in to donate</a>
+            {% endif %}
+
+            <div class="share">
+                <span class="muted">Share:</span>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://wa.me/?text={{ project.title|urlencode }}%20{{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://twitter.com/intent/tweet?url={{ share_url|urlencode }}&text={{ project.title|urlencode }}" target="_blank" rel="noopener" aria-label="Share on X"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        {% if recent_donations %}
+        <div class="panel recent">
+            <h3>Recent donations</h3>
+            {% for donation in recent_donations %}
+                <p><strong>{{ donation.user.first_name }} {{ donation.user.last_name }}</strong> donated {{ donation.amount|floatformat:0 }} EGP <span class="muted">· {{ donation.created_at|timesince }} ago</span></p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </aside>
+</div>
+
+{% if similar %}
+<section>
+    <h2 class="section-title">Similar campaigns</h2>
+    <div class="grid">{% for project in similar %}{% include 'projects/_card.html' %}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

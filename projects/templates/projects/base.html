@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fundraiser{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'projects/style.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <a href="{% url 'home' %}" class="brand">Fundraiser</a>
+        <form action="{% url 'search' %}" method="get" class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" name="q" value="{{ query|default:'' }}" placeholder="Search by title or tag">
+        </form>
+        <nav>
+            {% if user.is_authenticated %}
+                <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Start a campaign</a>
+                <a href="{% url 'my_projects' %}">My campaigns</a>
+                <a href="{% url 'my_donations' %}">My donations</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'logout' %}">Log out</a>
+            {% else %}
+                <a href="{% url 'auth_page' %}" class="btn btn-primary btn-sm">Log in</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="page">{% block content %}{% endblock %}</main>
+</body>
+</html>

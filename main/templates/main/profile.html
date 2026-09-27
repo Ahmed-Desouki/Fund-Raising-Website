@@ -14,8 +14,14 @@
 <body>
 
     <header class="topbar">
-        <a href="{% url 'dashboard' %}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
-        <a href="{% url 'logout' %}" class="back-link">Log out</a>
+        <a href="{% url 'dashboard' %}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        <nav>
+            <a href="{% url 'my_projects' %}" class="back-link">My campaigns</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'my_donations' %}" class="back-link">My donations</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'logout' %}" class="back-link">Log out</a>
+        </nav>
     </header>
 
     <main class="profile-page">
@@ -102,12 +108,26 @@
 
         <section class="ledger">
             <h2>My projects</h2>
-            <p class="empty-state">You haven't started a project yet.</p>
+            {% for project in request.user.projects.all %}
+                <div class="ledger-row">
+                    <a href="{% url 'project_detail' project.pk %}">{{ project.title }}</a>
+                    <div class="ledger-value">{{ project.total_donations|floatformat:0 }} / {{ project.total_target|floatformat:0 }} EGP{% if project.is_cancelled %} · Cancelled{% endif %}</div>
+                </div>
+            {% empty %}
+                <p class="empty-state">You haven't started a project yet. <a href="{% url 'project_create' %}">Start one</a></p>
+            {% endfor %}
         </section>
 
         <section class="ledger">
             <h2>My donations</h2>
-            <p class="empty-state">You haven't donated to a project yet.</p>
+            {% for donation in request.user.donations.all %}
+                <div class="ledger-row">
+                    <a href="{% url 'project_detail' donation.project.pk %}">{{ donation.project.title }}</a>
+                    <div class="ledger-value">{{ donation.amount|floatformat:0 }} EGP · {{ donation.created_at|date:"M j, Y" }}</div>
+                </div>
+            {% empty %}
+                <p class="empty-state">You haven't donated to a project yet.</p>
+            {% endfor %}
         </section>
 
         <section class="danger-zone">
