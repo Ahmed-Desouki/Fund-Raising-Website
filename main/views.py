@@ -66,7 +66,7 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    return render(request, 'main/dashboard.html')
+    return redirect('home')
 
 def send_activation_email(request, user):
     current_site = get_current_site(request)

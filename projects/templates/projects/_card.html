@@ -1,0 +1,15 @@
+<a href="{% url 'project_detail' project.pk %}" class="card">
+    <div class="card-img">
+        {% with cover=project.cover_image %}
+            {% if cover %}<img src="{{ cover.image.url }}" alt="">{% else %}<i class="fa-solid fa-hand-holding-heart"></i>{% endif %}
+        {% endwith %}
+        {% if project.is_cancelled %}<span class="badge">Cancelled</span>{% endif %}
+    </div>
+    <div class="card-body">
+        <span class="card-cat">{{ project.category.name }}</span>
+        <h3>{{ project.title }}</h3>
+        <div class="progress"><span style="width: {{ project.progress_percent }}%"></span></div>
+        <p class="card-meta">{{ project.total_donations|floatformat:0 }} of {{ project.total_target|floatformat:0 }} EGP · {{ project.progress_percent }}%</p>
+        <p class="card-meta"><i class="fa-regular fa-user"></i> {{ project.donor_count }} donor{{ project.donor_count|pluralize }} · <i class="fa-regular fa-clock"></i> {{ project.days_left }} day{{ project.days_left|pluralize }} left</p>
+    </div>
+</a>

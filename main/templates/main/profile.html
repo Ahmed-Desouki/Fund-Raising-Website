@@ -14,8 +14,14 @@
 <body>
 
     <header class="topbar">
-        <a href="{% url 'dashboard' %}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
-        <a href="{% url 'logout' %}" class="back-link">Log out</a>
+        <a href="{% url 'dashboard' %}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        <nav>
+            <a href="{% url 'my_projects' %}" class="back-link">My campaigns</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'my_donations' %}" class="back-link">My donations</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'logout' %}" class="back-link">Log out</a>
+        </nav>
     </header>
 
     <main class="profile-page">

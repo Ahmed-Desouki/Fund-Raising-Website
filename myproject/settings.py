@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'projects',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -106,9 +107,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Auth redirects
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'auth_page'
 LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'auth_page'
 
 
 # Cookie security

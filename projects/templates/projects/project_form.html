@@ -1,0 +1,20 @@
+{% extends 'projects/base.html' %}
+{% block title %}Start a campaign · Fundraiser{% endblock %}
+{% block content %}
+<div class="narrow">
+    <h1 class="page-title">Start a campaign</h1>
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Publish campaign</button>
+    </form>
+</div>
+{% endblock %}
