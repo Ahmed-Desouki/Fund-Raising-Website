@@ -281,3 +281,5 @@ body {
     .ledger-row label { flex: none; padding-top: 0; }
     .danger-zone { flex-direction: column; align-items: flex-start; }
 }
+.ledger-row a { color: var(--primary); font-weight: 500; text-decoration: none; }
+.ledger-row a:hover { text-decoration: underline; }
