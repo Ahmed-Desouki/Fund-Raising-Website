@@ -124,7 +124,20 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Email (console backend prints emails to your terminal instead of sending them — fine for dev)
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# With EMAIL_HOST_USER / EMAIL_HOST_PASSWORD in .env, emails are really sent through Gmail
+# (EMAIL_HOST_PASSWORD is a Gmail App Password, not the account password).
+# Without them, emails are printed in the runserver terminal instead.
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='').replace(' ', '')
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+    EMAIL_USE_TLS = True
+    EMAIL_TIMEOUT = 20
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Auth redirects
@@ -142,7 +155,7 @@ CSRF_COOKIE_HTTPONLY = False  # JS needs to read this cookie to send the X-CSRFT
 
 # Governs the expiry window for both account-activation links and (later) password-reset links
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 24 hours, in seconds
-DEFAULT_FROM_EMAIL = 'noreply@yourfundraiser.com'
+DEFAULT_FROM_EMAIL = f'Fundraiser <{EMAIL_HOST_USER}>' if EMAIL_HOST_USER else 'noreply@yourfundraiser.com'
 
 # Help chatbot (Google Gemini, free tier). Without a key the widget still shows but replies that it's unavailable.
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
