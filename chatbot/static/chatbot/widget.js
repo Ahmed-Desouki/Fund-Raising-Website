@@ -6,7 +6,11 @@
     const messagesEl = document.getElementById('chatbotMessages');
     const form = document.getElementById('chatbotForm');
     const input = document.getElementById('chatbotInput');
-    const csrfToken = root.querySelector('input[name=csrfmiddlewaretoken]').value;
+    // Read the token when sending: the cookie changes on login/logout, so a value saved at page load goes stale
+    const csrfToken = () => {
+        const cookie = document.cookie.split('; ').find(c => c.startsWith('csrftoken='));
+        return cookie ? decodeURIComponent(cookie.split('=')[1]) : root.querySelector('input[name=csrfmiddlewaretoken]').value;
+    };
 
     const STRINGS = {
         ar: {
@@ -87,7 +91,7 @@
         try {
             const response = await fetch(root.dataset.url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken() },
                 body: JSON.stringify({ message, history, language }),
             });
             const data = await response.json();
