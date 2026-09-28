@@ -3,6 +3,7 @@ Django settings for myproject project.
 """
 
 from pathlib import Path
+from urllib.parse import parse_qsl, unquote, urlparse
 from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,12 +68,32 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 # Database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Put DATABASE_URL=postgresql://user:password@host:5432/dbname in .env to use PostgreSQL
+# (e.g. the connection string from Neon). Without it the project uses a local SQLite file.
+DATABASE_URL = config('DATABASE_URL', default='')
+
+if DATABASE_URL:
+    _db = urlparse(DATABASE_URL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _db.path.lstrip('/'),
+            'USER': unquote(_db.username or ''),
+            'PASSWORD': unquote(_db.password or ''),
+            'HOST': _db.hostname,
+            'PORT': _db.port or 5432,
+            # Carries query options such as sslmode=require, which hosted databases need
+            'OPTIONS': dict(parse_qsl(_db.query)),
+            'CONN_MAX_AGE': 60,
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

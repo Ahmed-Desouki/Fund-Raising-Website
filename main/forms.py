@@ -1,14 +1,21 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from .models import Profile
+
+# Egyptian mobile numbers: 010 / 011 / 012 / 015 followed by 8 digits
+egyptian_mobile_validator = RegexValidator(
+    regex=r'^01[0125][0-9]{8}$',
+    message='Enter a valid Egyptian mobile number (e.g. 01012345678).',
+)
 
 
 class RegisterForm(forms.Form):
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
     email = forms.EmailField()
-    mobile_number = forms.CharField(max_length=11)
+    mobile_number = forms.CharField(max_length=11, validators=[egyptian_mobile_validator])
     password1 = forms.CharField()
     password2 = forms.CharField()
     profile_picture = forms.ImageField(required=False)
@@ -46,7 +53,7 @@ class RegisterForm(forms.Form):
 class ProfileEditForm(forms.Form):
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
-    mobile_number = forms.CharField(max_length=11)
+    mobile_number = forms.CharField(max_length=11, validators=[egyptian_mobile_validator])
     profile_picture = forms.ImageField(required=False)
     birthdate = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     facebook_profile = forms.URLField(required=False)
