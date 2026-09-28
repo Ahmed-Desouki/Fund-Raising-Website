@@ -14,6 +14,8 @@ from django.utils import timezone
 from projects.models import Category, Project
 
 MAX_CAMPAIGNS_IN_CONTEXT = 30
+# Busy / rate limited / server error: worth trying the next model
+RETRYABLE_STATUS_CODES = {429, 500, 503}
 
 SYSTEM_PROMPT = """You are the help assistant for "Fundraiser", a crowdfunding website for charity and community projects in Egypt.
 
@@ -77,13 +79,23 @@ def ask(history, language):
     config = types.GenerateContentConfig(
         system_instruction='\n\n'.join([SYSTEM_PROMPT, campaigns_context(), LANGUAGE_INSTRUCTIONS[language]]),
         max_output_tokens=2048,
+        # The bot has no tools, so skip the SDK's function-calling machinery (and its warning)
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
     )
-    try:
-        response = client.models.generate_content(model=settings.GEMINI_MODEL, contents=contents, config=config)
-    except errors.APIError as e:
-        raise AssistantUnavailable(f'Gemini API error {e.code}: {e.message}') from e
-    except httpx.HTTPError as e:
-        raise AssistantUnavailable('Could not reach the Gemini API') from e
+    # Free-tier models are often briefly overloaded, so fall through to the next one
+    last_error = None
+    for model in settings.GEMINI_MODELS:
+        try:
+            response = client.models.generate_content(model=model, contents=contents, config=config)
+            break
+        except errors.APIError as e:
+            last_error = f'Gemini API error {e.code} on {model}: {e.message}'
+            if e.code not in RETRYABLE_STATUS_CODES:
+                raise AssistantUnavailable(last_error) from e
+        except httpx.HTTPError as e:
+            raise AssistantUnavailable('Could not reach the Gemini API') from e
+    else:
+        raise AssistantUnavailable(last_error)
 
     # text is None when the answer was blocked by safety filters
     text = (response.text or '').strip()

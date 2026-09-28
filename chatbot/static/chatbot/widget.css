@@ -71,3 +71,4 @@
 @media (max-width: 480px) {
     .chatbot { right: 16px; bottom: 16px; }
 }
+.chatbot-msg a { color: var(--cb-primary); font-weight: 600; direction: ltr; unicode-bidi: embed; }

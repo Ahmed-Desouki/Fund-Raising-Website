@@ -30,10 +30,25 @@
     // Conversation sent back to the server on each turn (the API is stateless)
     let history = [];
 
+    // Builds the bubble from text nodes (never innerHTML) and turns campaign paths like /projects/3/ into links
+    function setText(bubble, text) {
+        bubble.textContent = '';
+        let last = 0;
+        for (const match of text.matchAll(/\/projects\/\d+\//g)) {
+            bubble.append(text.slice(last, match.index));
+            const link = document.createElement('a');
+            link.href = match[0];
+            link.textContent = match[0];
+            bubble.append(link);
+            last = match.index + match[0].length;
+        }
+        bubble.append(text.slice(last));
+    }
+
     function addMessage(role, text) {
         const bubble = document.createElement('div');
         bubble.className = `chatbot-msg ${role}`;
-        bubble.textContent = text;
+        setText(bubble, text);
         messagesEl.appendChild(bubble);
         messagesEl.scrollTop = messagesEl.scrollHeight;
         return bubble;
@@ -79,7 +94,7 @@
             const data = await response.json();
             pending.classList.remove('pending');
             if (response.ok) {
-                pending.textContent = data.reply;
+                setText(pending, data.reply);
                 history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
             } else {
                 pending.classList.add('error');

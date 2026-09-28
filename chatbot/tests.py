@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from google.genai import errors
 
 from projects.models import Category, Project
 
@@ -23,7 +24,7 @@ def as_dicts(contents):
     return [{'role': c.role, 'content': c.parts[0].text} for c in contents]
 
 
-@override_settings(GEMINI_API_KEY='test-key', GEMINI_MODEL='gemini-test')
+@override_settings(GEMINI_API_KEY='test-key', GEMINI_MODELS=['gemini-test', 'gemini-backup'])
 class ChatbotTests(TestCase):
     def setUp(self):
         owner = User.objects.create_user('o@x.com', 'o@x.com', 'StrongPass#1')
@@ -70,6 +71,18 @@ class ChatbotTests(TestCase):
             {'role': 'model', 'content': 'Hello'},
             {'role': 'user', 'content': 'And then?'},
         ])
+
+    def test_falls_back_to_next_model_when_busy(self):
+        busy = errors.ServerError(503, {'error': {'code': 503, 'message': 'high demand', 'status': 'UNAVAILABLE'}})
+        self.create.side_effect = [busy, fake_response('From backup')]
+        response = self.post({'message': 'Hi', 'language': 'en'})
+        self.assertEqual(response.json()['reply'], 'From backup')
+        self.assertEqual([c.kwargs['model'] for c in self.create.call_args_list], ['gemini-test', 'gemini-backup'])
+
+    def test_non_retryable_error_stops(self):
+        self.create.side_effect = errors.ClientError(400, {'error': {'code': 400, 'message': 'bad', 'status': 'INVALID_ARGUMENT'}})
+        self.assertEqual(self.post({'message': 'Hi'}).status_code, 503)
+        self.assertEqual(self.create.call_count, 1)
 
     def test_empty_message_rejected(self):
         self.assertEqual(self.post({'message': '   '}).status_code, 400)

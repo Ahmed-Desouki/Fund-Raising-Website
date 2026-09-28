@@ -146,4 +146,5 @@ DEFAULT_FROM_EMAIL = 'noreply@yourfundraiser.com'
 
 # Help chatbot (Google Gemini, free tier). Without a key the widget still shows but replies that it's unavailable.
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
-GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.8-flash')
+# Tried in order; later ones are used when an earlier one is overloaded or rate limited
+GEMINI_MODELS = config('GEMINI_MODELS', default='gemini-3.8-flash,gemini-flash-latest,gemini-flash-lite-latest', cast=Csv())
