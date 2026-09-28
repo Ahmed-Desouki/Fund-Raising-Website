@@ -64,7 +64,10 @@ profilePicture.addEventListener("change", function() {
 
 // ---- CSRF helper: reads the token from the {% csrf_token %} hidden input you added after <body> ----
 function getCSRFToken() {
-    return document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    // Prefer the cookie: it's rotated on every login/logout (even from another tab),
+    // while the hidden input keeps the value from when this page was loaded
+    const cookie = document.cookie.split("; ").find(c => c.startsWith("csrftoken="));
+    return cookie ? decodeURIComponent(cookie.split("=")[1]) : document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 }
 
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
