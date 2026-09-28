@@ -68,7 +68,16 @@ The demo accounts' password is `DEMO_PASSWORD` in `projects/management/commands/
 
 ### Activation emails
 
-In development, emails are printed in the terminal where `runserver` is running. Copy the activation link from there.
+By default, emails are printed in the terminal where `runserver` is running. Copy the activation link from there.
+
+To really send them through Gmail, add to `.env`:
+
+```
+EMAIL_HOST_USER=you@gmail.com
+EMAIL_HOST_PASSWORD=your 16-letter App Password
+```
+
+Create the App Password at https://myaccount.google.com/apppasswords (needs 2-Step Verification). It must belong to the same Gmail account as `EMAIL_HOST_USER`. Never use your normal Gmail password.
 
 ## Optional settings (`.env`)
 
@@ -77,6 +86,7 @@ In development, emails are printed in the terminal where `runserver` is running.
 | `GEMINI_API_KEY` | Turns on the chatbot. Free key: https://aistudio.google.com/apikey. Without it the bot says it's unavailable. |
 | `GEMINI_MODELS` | Comma-separated models tried in order. Default: `gemini-3.8-flash,gemini-flash-latest,gemini-flash-lite-latest` |
 | `DATABASE_URL` | Use PostgreSQL instead of SQLite, e.g. `postgresql://user:password@localhost:5432/fundraiser` |
+| `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` | Send real emails through Gmail (see above) |
 | `ALLOWED_HOSTS` | Comma-separated hosts, default `127.0.0.1,localhost` |
 
 Never commit `.env`; it's in `.gitignore`.
