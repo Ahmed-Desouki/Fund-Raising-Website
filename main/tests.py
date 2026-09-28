@@ -43,3 +43,43 @@ class EgyptianMobileValidationTests(TestCase):
     def test_profile_edit_accepts_valid_number(self):
         form = ProfileEditForm({'first_name': 'A', 'last_name': 'B', 'mobile_number': '01112345678'})
         self.assertTrue(form.is_valid())
+
+
+class PasswordResetTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('reset@x.com', 'reset@x.com', 'OldPass#123', first_name='Reem')
+
+    def test_login_page_links_to_reset(self):
+        self.assertContains(self.client.get(reverse('auth_page')), reverse('password_reset'))
+
+    def test_full_reset_flow(self):
+        from django.core import mail
+        response = self.client.post(reverse('password_reset'), {'email': 'RESET@x.com'})
+        self.assertRedirects(response, reverse('password_reset_done'))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Reset your Fundraiser password')
+        self.assertIn('Hi Reem', mail.outbox[0].body)
+
+        link = next(line for line in mail.outbox[0].body.splitlines() if '/password-reset/' in line)
+        path = link.split('testserver', 1)[1]
+        # Django swaps the token for a session value and redirects to a "set-password" URL
+        response = self.client.get(path, follow=True)
+        self.assertContains(response, 'Choose a new password')
+        form_url = response.redirect_chain[-1][0]
+        response = self.client.post(form_url, {'new_password1': 'BrandNew#456', 'new_password2': 'BrandNew#456'})
+        self.assertRedirects(response, reverse('password_reset_complete'))
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('BrandNew#456'))
+        # The same link can't be used twice
+        self.assertContains(self.client.get(path, follow=True), 'Link expired')
+
+    def test_unknown_email_gives_same_answer_and_sends_nothing(self):
+        from django.core import mail
+        response = self.client.post(reverse('password_reset'), {'email': 'nobody@x.com'})
+        self.assertRedirects(response, reverse('password_reset_done'))
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_reset_pages_render(self):
+        for name in ['password_reset', 'password_reset_done', 'password_reset_complete']:
+            self.assertEqual(self.client.get(reverse(name)).status_code, 200, name)
