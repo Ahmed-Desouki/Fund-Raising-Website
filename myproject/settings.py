@@ -144,5 +144,6 @@ CSRF_COOKIE_HTTPONLY = False  # JS needs to read this cookie to send the X-CSRFT
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 24 hours, in seconds
 DEFAULT_FROM_EMAIL = 'noreply@yourfundraiser.com'
 
-# Help chatbot (Claude API). Without a key the widget still shows but replies that it's unavailable.
-ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
+# Help chatbot (Google Gemini, free tier). Without a key the widget still shows but replies that it's unavailable.
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.8-flash')

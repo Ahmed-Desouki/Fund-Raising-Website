@@ -1,17 +1,18 @@
 """
-Talks to Claude on behalf of the site's help bot.
+Talks to Google Gemini (free tier) on behalf of the site's help bot.
 
 The bot answers questions about the platform (how to register, donate, start a
 campaign, ...) and about the campaigns currently on the site, in Arabic or English.
 """
-import anthropic
+import httpx
 from django.conf import settings
+from google import genai
+from google.genai import errors, types
 from django.urls import reverse
 from django.utils import timezone
 
 from projects.models import Category, Project
 
-MODEL = 'claude-opus-5'
 MAX_CAMPAIGNS_IN_CONTEXT = 30
 
 SYSTEM_PROMPT = """You are the help assistant for "Fundraiser", a crowdfunding website for charity and community projects in Egypt.
@@ -64,40 +65,28 @@ def ask(history, language):
     history: list of {"role": "user"|"assistant", "content": str}, ending with the user's message.
     Returns the assistant's reply text.
     """
-    api_key = settings.ANTHROPIC_API_KEY
+    api_key = settings.GEMINI_API_KEY
     if not api_key:
-        raise AssistantUnavailable('ANTHROPIC_API_KEY is not set')
+        raise AssistantUnavailable('GEMINI_API_KEY is not set')
 
-    client = anthropic.Anthropic(api_key=api_key, timeout=60.0)
-    system = [
-        # Stable instructions first so they can be cached across visitors
-        {'type': 'text', 'text': SYSTEM_PROMPT, 'cache_control': {'type': 'ephemeral'}},
-        {'type': 'text', 'text': campaigns_context()},
-        {'type': 'text', 'text': LANGUAGE_INSTRUCTIONS[language]},
+    client = genai.Client(api_key=api_key)
+    contents = [
+        types.Content(role='model' if turn['role'] == 'assistant' else 'user', parts=[types.Part(text=turn['content'])])
+        for turn in history
     ]
+    config = types.GenerateContentConfig(
+        system_instruction='\n\n'.join([SYSTEM_PROMPT, campaigns_context(), LANGUAGE_INSTRUCTIONS[language]]),
+        max_output_tokens=2048,
+    )
     try:
-        response = client.beta.messages.create(
-            model=MODEL,
-            max_tokens=2048,
-            system=system,
-            messages=history,
-            # Chat answers don't need deep reasoning; low effort keeps replies fast and cheap
-            output_config={'effort': 'low'},
-            # If a request is declined, let the API retry it on a suitable fallback model
-            betas=['server-side-fallback-2026-07-01'],
-            fallbacks='default',
-        )
-    except anthropic.APIConnectionError as e:
-        raise AssistantUnavailable('Could not reach the Claude API') from e
-    except anthropic.RateLimitError as e:
-        raise AssistantUnavailable('Rate limited by the Claude API') from e
-    except anthropic.APIStatusError as e:
-        raise AssistantUnavailable(f'Claude API error {e.status_code}') from e
+        response = client.models.generate_content(model=settings.GEMINI_MODEL, contents=contents, config=config)
+    except errors.APIError as e:
+        raise AssistantUnavailable(f'Gemini API error {e.code}: {e.message}') from e
+    except httpx.HTTPError as e:
+        raise AssistantUnavailable('Could not reach the Gemini API') from e
 
-    if response.stop_reason == 'refusal':
-        raise AssistantUnavailable('Request was declined')
-
-    text = ''.join(block.text for block in response.content if block.type == 'text').strip()
+    # text is None when the answer was blocked by safety filters
+    text = (response.text or '').strip()
     if not text:
-        raise AssistantUnavailable('Empty response')
+        raise AssistantUnavailable('Empty or blocked response')
     return text

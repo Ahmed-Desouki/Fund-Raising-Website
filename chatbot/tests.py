@@ -15,11 +15,15 @@ from . import assistant
 from .views import RATE_LIMIT_MESSAGES
 
 
-def fake_response(text, stop_reason='end_turn'):
-    return SimpleNamespace(stop_reason=stop_reason, content=[SimpleNamespace(type='text', text=text)])
+def fake_response(text):
+    return SimpleNamespace(text=text)
 
 
-@override_settings(ANTHROPIC_API_KEY='test-key')
+def as_dicts(contents):
+    return [{'role': c.role, 'content': c.parts[0].text} for c in contents]
+
+
+@override_settings(GEMINI_API_KEY='test-key', GEMINI_MODEL='gemini-test')
 class ChatbotTests(TestCase):
     def setUp(self):
         owner = User.objects.create_user('o@x.com', 'o@x.com', 'StrongPass#1')
@@ -28,10 +32,10 @@ class ChatbotTests(TestCase):
             owner=owner, title='Clean water', details='Wells', category=Category.objects.get(name='Health'),
             total_target=Decimal('1000'), start_time=now - timedelta(days=1), end_time=now + timedelta(days=5),
         )
-        patcher = mock.patch('chatbot.assistant.anthropic.Anthropic')
+        patcher = mock.patch('chatbot.assistant.genai.Client')
         self.client_cls = patcher.start()
         self.addCleanup(patcher.stop)
-        self.create = self.client_cls.return_value.beta.messages.create
+        self.create = self.client_cls.return_value.models.generate_content
         self.create.return_value = fake_response('Hello!')
 
     def post(self, payload):
@@ -43,16 +47,15 @@ class ChatbotTests(TestCase):
         self.assertEqual(response.json()['reply'], 'Hello!')
 
         kwargs = self.create.call_args.kwargs
-        self.assertEqual(kwargs['model'], 'claude-opus-5')
-        self.assertEqual(kwargs['messages'], [{'role': 'user', 'content': 'How do I donate?'}])
-        system_text = ' '.join(block['text'] for block in kwargs['system'])
+        self.assertEqual(kwargs['model'], 'gemini-test')
+        self.assertEqual(as_dicts(kwargs['contents']), [{'role': 'user', 'content': 'How do I donate?'}])
+        system_text = kwargs['config'].system_instruction
         self.assertIn('Clean water', system_text)          # live campaigns are in context
         self.assertIn('Egyptian Arabic', system_text)      # language choice is honoured
 
     def test_english_language(self):
         self.post({'message': 'Hi', 'language': 'en'})
-        system_text = ' '.join(block['text'] for block in self.create.call_args.kwargs['system'])
-        self.assertIn('Reply in English', system_text)
+        self.assertIn('Reply in English', self.create.call_args.kwargs['config'].system_instruction)
 
     def test_history_is_sanitised(self):
         self.post({'message': 'And then?', 'language': 'en', 'history': [
@@ -62,9 +65,9 @@ class ChatbotTests(TestCase):
             {'role': 'assistant', 'content': 'Hello'},
             'garbage',
         ]})
-        self.assertEqual(self.create.call_args.kwargs['messages'], [
+        self.assertEqual(as_dicts(self.create.call_args.kwargs['contents']), [
             {'role': 'user', 'content': 'Hi'},
-            {'role': 'assistant', 'content': 'Hello'},
+            {'role': 'model', 'content': 'Hello'},
             {'role': 'user', 'content': 'And then?'},
         ])
 
@@ -72,13 +75,13 @@ class ChatbotTests(TestCase):
         self.assertEqual(self.post({'message': '   '}).status_code, 400)
         self.create.assert_not_called()
 
-    def test_refusal_returns_friendly_error(self):
-        self.create.return_value = fake_response('', stop_reason='refusal')
+    def test_blocked_answer_returns_friendly_error(self):
+        self.create.return_value = fake_response(None)
         response = self.post({'message': 'Hi', 'language': 'ar'})
         self.assertEqual(response.status_code, 503)
         self.assertIn('المساعد', response.json()['error'])
 
-    @override_settings(ANTHROPIC_API_KEY='')
+    @override_settings(GEMINI_API_KEY='')
     def test_missing_key_returns_friendly_error(self):
         response = self.post({'message': 'Hi', 'language': 'en'})
         self.assertEqual(response.status_code, 503)
