@@ -241,3 +241,26 @@ class ReadableConsoleEmailTests(TestCase):
             self.assertIn(link, output)          # the whole link on one line, copyable
             self.assertIn(body.split('\n')[0], output)
             self.assertIn('To: s@x.com', output)
+
+    def test_terminal_that_cannot_show_arabic_still_gets_the_link(self):
+        import io
+        from django.core.mail import EmailMessage
+        from .email import ReadableConsoleEmailBackend
+        link = 'http://127.0.0.1:8000/activate/MTA/abc-123/'
+        raw = io.BytesIO()
+        stream = io.TextIOWrapper(raw, encoding='cp1252')  # like a default Windows terminal
+        sent = ReadableConsoleEmailBackend(stream=stream).send_messages(
+            [EmailMessage('فعّل حسابك', f'أهلاً\n\n{link}\n', None, ['s@x.com'])])
+        stream.flush()
+        self.assertEqual(sent, 1)
+        self.assertIn(link, raw.getvalue().decode('cp1252'))
+
+    def test_arabic_signup_works_on_a_windows_terminal(self):
+        import io
+        from django.test import override_settings
+        stream = io.TextIOWrapper(io.BytesIO(), encoding='cp1252')
+        with override_settings(EMAIL_BACKEND='main.email.ReadableConsoleEmailBackend'), mock.patch('sys.stdout', stream):
+            self.client.post(reverse('set_language'), {'language': 'ar', 'next': '/'})
+            response = self.client.post(reverse('api_register'), register_data())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(User.objects.filter(email='salma@example.com').exists())
