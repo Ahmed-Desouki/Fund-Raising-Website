@@ -64,7 +64,7 @@
                     <label for="id_total_target">{% translate "Target amount" %}</label>
                     <div class="input-prefix">
                         <span>{% translate "EGP" %}</span>
-                        <input type="number" name="total_target" id="id_total_target" min="1" step="0.01" value="{{ form.total_target.value|default:'' }}" placeholder="250000" required>
+                        <input type="number" name="total_target" id="id_total_target" min="1" step="1" value="{{ form.total_target.value|default:'' }}" placeholder="250000" required>
                     </div>
                     {% for error in form.total_target.errors %}<small class="error">{{ error }}</small>{% endfor %}
                 </div>

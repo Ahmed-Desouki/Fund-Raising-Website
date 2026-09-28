@@ -89,7 +89,7 @@
                             <button type="button" class="chip" onclick="document.getElementById('id_amount').value = {{ amount }}">{{ amount }} {% translate "EGP" %}</button>
                         {% endfor %}
                     </div>
-                    <input type="number" name="amount" id="id_amount" min="1" step="0.01" placeholder="{% translate 'Amount (EGP)' %}" required>
+                    <input type="number" name="amount" id="id_amount" min="1" step="1" placeholder="{% translate 'Amount (EGP)' %}" required>
                     <button class="btn btn-primary btn-block"><i class="fa-solid fa-heart"></i> {% translate "Donate now" %}</button>
                 </form>
                 {% else %}
