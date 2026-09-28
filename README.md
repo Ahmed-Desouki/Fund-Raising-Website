@@ -10,7 +10,7 @@ ITI Django final project (team 2). People can start fundraising campaigns for ch
 - Log in with email and password
 - Forgot password: reset link by email, valid for 24 hours and single-use
 - Profile: edit everything except email, with optional birthdate, Facebook profile and country. Shows your campaigns and donations
-- Delete account, with a confirmation step
+- Delete account: confirmation step plus your password
 
 **Campaigns** (`projects` app)
 - Create a campaign: title, details, category, multiple pictures, target in EGP, tags, start/end time

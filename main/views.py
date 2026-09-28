@@ -120,13 +120,20 @@ def profile_view(request):
             'country': profile.country,
         })
 
-    return render(request, 'main/profile.html', {'form': form})
+    return render(request, 'main/profile.html', {
+        'form': form,
+        # Set by delete_account when the password was wrong, so the modal reopens with the error
+        'delete_error': request.session.pop('delete_error', None),
+    })
 
 
 @login_required
 @require_POST
 def delete_account(request):
     user = request.user
+    if not user.check_password(request.POST.get('password', '')):
+        request.session['delete_error'] = 'Incorrect password. Your account was not deleted.'
+        return redirect('profile')
     logout(request)
     user.delete()  # CASCADE also removes the linked Profile row
     return redirect('auth_page')
