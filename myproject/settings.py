@@ -3,6 +3,7 @@ Django settings for myproject project.
 """
 
 from pathlib import Path
+from urllib.parse import parse_qsl, unquote, urlparse
 from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,26 +68,30 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 # Database
 
-# Set DB_ENGINE=postgresql (or mysql) in .env to use a real database server;
-# without it the project falls back to a local SQLite file.
-DB_ENGINE = config('DB_ENGINE', default='sqlite3')
+# Put DATABASE_URL=postgresql://user:password@host:5432/dbname in .env to use PostgreSQL
+# (e.g. the connection string from Neon). Without it the project uses a local SQLite file.
+DATABASE_URL = config('DATABASE_URL', default='')
 
-if DB_ENGINE == 'sqlite3':
+if DATABASE_URL:
+    _db = urlparse(DATABASE_URL)
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _db.path.lstrip('/'),
+            'USER': unquote(_db.username or ''),
+            'PASSWORD': unquote(_db.password or ''),
+            'HOST': _db.hostname,
+            'PORT': _db.port or 5432,
+            # Carries query options such as sslmode=require, which hosted databases need
+            'OPTIONS': dict(parse_qsl(_db.query)),
+            'CONN_MAX_AGE': 60,
         }
     }
 else:
     DATABASES = {
         'default': {
-            'ENGINE': f'django.db.backends.{DB_ENGINE}',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432' if DB_ENGINE == 'postgresql' else '3306'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
