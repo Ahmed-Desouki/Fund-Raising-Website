@@ -1,8 +1,11 @@
+import logging
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,9 +15,11 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .forms import RegisterForm
 from .tokens import account_activation_token
 
+logger = logging.getLogger(__name__)
+
 def auth_page(request):
-    # if request.user.is_authenticated:
-    #     return redirect('dashboard')
+    if request.user.is_authenticated:
+        return redirect('home')
     return render(request, 'registration/register.html')
 
 
@@ -23,7 +28,15 @@ def api_register(request):
     form = RegisterForm(request.POST, request.FILES)
     if form.is_valid():
         user = form.save()
-        send_activation_email(request, user)
+        try:
+            send_activation_email(request, user)
+        except Exception:
+            logger.exception('Could not send the activation email to %s', user.email)
+            user.delete()  # so the person can simply try again
+            return JsonResponse({
+                'success': False,
+                'errors': {'email': [_("We couldn't send the activation email. Please try again in a few minutes.")]},
+            }, status=503)
         return JsonResponse({
             'success': True,
             'message': _('Account created. Check your email to activate your account before logging in.')
@@ -36,10 +49,7 @@ def api_login(request):
     email = request.POST.get('email')
     password = request.POST.get('password')
 
-    try:
-        existing_user = User.objects.get(email__iexact=email)
-    except User.DoesNotExist:
-        existing_user = None
+    existing_user = User.objects.filter(email__iexact=email or '').order_by('-is_active', 'pk').first()
 
     # Wrong password (or no such user) always gets the generic message —
     # only a *correct* password reveals the "please activate" state.
@@ -52,7 +62,7 @@ def api_login(request):
             'error': _('Please activate your account via the link sent to your email before logging in.')
         }, status=403)
 
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(request, username=existing_user.email, password=password)
     if user is not None:
         login(request, user)
         return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
@@ -73,7 +83,7 @@ def send_activation_email(request, user):
     current_site = get_current_site(request)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = account_activation_token.make_token(user)
-    activation_link = f"http://{current_site.domain}/activate/{uid}/{token}/"
+    activation_link = f"{request.scheme}://{current_site.domain}{reverse('activate', args=[uid, token])}"
 
     subject = _("Activate your account")
     message = _(
@@ -100,6 +110,12 @@ def activate_account(request, uidb64, token):
     return render(request, 'registration/activation_invalid.html')
 
 from .forms import RegisterForm, ProfileEditForm
+from .models import Profile
+
+
+def get_profile(user):
+    # Accounts made with createsuperuser (or before profiles existed) have no Profile row yet
+    return Profile.objects.get_or_create(user=user, defaults={'mobile_number': ''})[0]
 
 
 @login_required
@@ -111,7 +127,7 @@ def profile_view(request):
             return redirect('profile')
         # fall through and re-render with errors
     else:
-        profile = request.user.profile
+        profile = get_profile(request.user)
         form = ProfileEditForm(initial={
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,

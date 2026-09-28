@@ -1,5 +1,8 @@
 from django import forms
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from main.forms import max_image_size
 
 from .models import Category, Donation, Project, ProjectImage, Tag
 
@@ -15,9 +18,13 @@ class MultipleImageField(forms.ImageField):
 
     def clean(self, data, initial=None):
         single_clean = super().clean
-        if isinstance(data, (list, tuple)):
-            return [single_clean(d, initial) for d in data]
-        return [single_clean(data, initial)] if data else []
+        files = data if isinstance(data, (list, tuple)) else ([data] if data else [])
+        cleaned = [single_clean(d, initial) for d in files]
+        if self.required and not cleaned:
+            raise forms.ValidationError(self.error_messages['required'], code='required')
+        for image in cleaned:
+            max_image_size(image)
+        return cleaned
 
 
 class ProjectForm(forms.ModelForm):
@@ -50,6 +57,8 @@ class ProjectForm(forms.ModelForm):
         start, end = cleaned_data.get('start_time'), cleaned_data.get('end_time')
         if start and end and end <= start:
             self.add_error('end_time', _('End time must be after the start time.'))
+        elif end and end <= timezone.now():
+            self.add_error('end_time', _('End time must be in the future.'))
         return cleaned_data
 
     def save(self, owner):
