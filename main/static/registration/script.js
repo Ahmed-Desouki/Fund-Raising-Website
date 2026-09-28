@@ -1,3 +1,14 @@
+// Translated messages come from register.html; fall back to English if missing
+const T = Object.assign({
+    show: "Show", hide: "Hide",
+    pictureTooBig: "Profile picture must be smaller than 5MB.",
+    invalidEmail: "Please enter a valid email address.",
+    weakPassword: "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a special character.",
+    passwordsDontMatch: "Passwords do not match.",
+    invalidMobile: "Enter a valid mobile number (e.g. 01012345678).",
+    somethingWrong: "Something went wrong. Please try again.",
+}, window.I18N || {});
+
 const registerPage = document.getElementById("registerPage");
 const loginPage = document.getElementById("loginPage");
 
@@ -19,10 +30,10 @@ document.querySelectorAll(".show-password").forEach(button => {
 
         if (input.type === "password") {
             input.type = "text";
-            this.textContent = "Hide";
+            this.textContent = T.hide;
         } else {
             input.type = "password";
-            this.textContent = "Show";
+            this.textContent = T.show;
         }
     });
 });
@@ -35,7 +46,7 @@ profilePicture.addEventListener("change", function() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-        alert("Profile picture must be smaller than 5MB.");
+        alert(T.pictureTooBig);
         this.value = "";
         return;
     }
@@ -71,23 +82,22 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     let valid = true;
 
     if (!email.validity.valid) {
-        document.getElementById("emailError").textContent = "Please enter a valid email address.";
+        document.getElementById("emailError").textContent = T.invalidEmail;
         valid = false;
     }
 
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>_\-+=~`[\];'/\\]).{8,}$/;
     if (!passwordPattern.test(password.value)) {
-        document.getElementById("passwordError").textContent =
-            "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a special character.";
+        document.getElementById("passwordError").textContent = T.weakPassword;
         valid = false;
     } else if (password.value !== confirmPassword.value) {
-        document.getElementById("passwordError").textContent = "Passwords do not match.";
+        document.getElementById("passwordError").textContent = T.passwordsDontMatch;
         valid = false;
     }
 
     const mobilePattern = /^(010|011|012|015)[0-9]{8}$/;
     if (!mobilePattern.test(mobile_Number.value)) {
-        document.getElementById("mobileError").textContent = "Enter a valid mobile number (e.g. 01012345678).";
+        document.getElementById("mobileError").textContent = T.invalidMobile;
         valid = false;
     }
 
@@ -101,8 +111,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     formData.set("password2", confirmPassword.value);
     formData.set("mobile_number", mobile_Number.value);
 
-    const firstName = form.querySelector('input[placeholder="Enter your first name"]');
-    const lastName = form.querySelector('input[placeholder="Enter your last name"]');
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
     formData.set("first_name", firstName.value);
     formData.set("last_name", lastName.value);
 
@@ -111,15 +121,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     try {
-        console.log("mobile_number value:", mobile_Number.value);
-        console.log("FormData mobile_number:", formData.get("mobile_number"));
         const response = await fetch("/api/register/", {
             method: "POST",
             headers: { "X-CSRFToken": getCSRFToken() },
             body: formData,
         });
         const result = await response.json();
-        console.log("Register error:", result); // remove once confirmed working
 
         if (result.success) {
             registerForm.reset();
@@ -140,7 +147,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             }
         }
     } catch (err) {
-        alert("Something went wrong. Please try again.");
+        alert(T.somethingWrong);
     }
 });
 
@@ -148,7 +155,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     e.preventDefault();
 
     const loginForm = this;
-    const email = loginForm.querySelector('input[type="email"]').value;
+    const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
 
     try {
@@ -168,6 +175,6 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             alert(result.error);
         }
     } catch (err) {
-        alert("Something went wrong. Please try again.");
+        alert(T.somethingWrong);
     }
 });

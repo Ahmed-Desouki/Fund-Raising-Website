@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from .forms import CommentForm, DonationForm, ProjectForm, RatingForm, ReportForm
@@ -39,18 +40,20 @@ def home(request):
 def category_projects(request, pk):
     category = get_object_or_404(Category, pk=pk)
     projects = active_projects().filter(category=category)
-    return render(request, 'projects/project_list.html', {'projects': projects, 'heading': category.name})
+    return render(request, 'projects/project_list.html', {'projects': projects, 'heading': _(category.name)})
 
 
 def search(request):
     query = request.GET.get('q', '').strip()
     projects = active_projects()
     if query:
-        projects = projects.filter(Q(title__icontains=query) | Q(tags__name__iexact=query)).distinct()
+        projects = projects.filter(
+            Q(title__icontains=query) | Q(title_ar__icontains=query) | Q(tags__name__iexact=query)
+        ).distinct()
     return render(request, 'projects/project_list.html', {
         'projects': projects,
         # An empty search doubles as "browse all campaigns"
-        'heading': f'Results for “{query}”' if query else 'All campaigns',
+        'heading': _('Results for “%(query)s”') % {'query': query} if query else _('All campaigns'),
         'query': query,
     })
 
@@ -61,7 +64,7 @@ def project_create(request):
         form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
             project = form.save(owner=request.user)
-            messages.success(request, 'Your campaign is live.')
+            messages.success(request, _('Your campaign is live.'))
             return redirect('project_detail', pk=project.pk)
     else:
         form = ProjectForm()
@@ -105,7 +108,7 @@ def project_detail(request, pk):
 def donate(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if not project.is_running:
-        messages.error(request, 'This campaign is not accepting donations.')
+        messages.error(request, _('This campaign is not accepting donations.'))
         return redirect('project_detail', pk=pk)
 
     form = DonationForm(request.POST)
@@ -114,9 +117,9 @@ def donate(request, pk):
         donation.project = project
         donation.user = request.user
         donation.save()
-        messages.success(request, f'Thank you for donating {donation.amount} EGP!')
+        messages.success(request, _('Thank you for donating %(amount)s EGP!') % {'amount': donation.amount})
     else:
-        messages.error(request, 'Please enter a valid donation amount.')
+        messages.error(request, _('Please enter a valid donation amount.'))
     return redirect('project_detail', pk=pk)
 
 
@@ -140,7 +143,7 @@ def rate_project(request, pk):
     form = RatingForm(request.POST)
     if form.is_valid():
         Rating.objects.update_or_create(project=project, user=request.user, defaults={'value': form.cleaned_data['value']})
-        messages.success(request, 'Thanks for rating this campaign.')
+        messages.success(request, _('Thanks for rating this campaign.'))
     return redirect('project_detail', pk=pk)
 
 
@@ -151,7 +154,7 @@ def report_project(request, pk):
     form = ReportForm(request.POST)
     if form.is_valid():
         ProjectReport.objects.create(project=project, user=request.user, reason=form.cleaned_data['reason'])
-        messages.success(request, 'Report submitted. Our team will review it.')
+        messages.success(request, _('Report submitted. Our team will review it.'))
     return redirect('project_detail', pk=pk)
 
 
@@ -162,7 +165,7 @@ def report_comment(request, pk):
     form = ReportForm(request.POST)
     if form.is_valid():
         CommentReport.objects.create(comment=comment, user=request.user, reason=form.cleaned_data['reason'])
-        messages.success(request, 'Comment reported. Our team will review it.')
+        messages.success(request, _('Comment reported. Our team will review it.'))
     return redirect('project_detail', pk=comment.project_id)
 
 
@@ -173,16 +176,16 @@ def cancel_project(request, pk):
     if project.can_be_cancelled:
         project.is_cancelled = True
         project.save(update_fields=['is_cancelled'])
-        messages.success(request, 'Your campaign has been cancelled.')
+        messages.success(request, _('Your campaign has been cancelled.'))
     else:
-        messages.error(request, 'Campaigns can only be cancelled while donations are under 25% of the target.')
+        messages.error(request, _('Campaigns can only be cancelled while donations are under 25% of the target.'))
     return redirect('project_detail', pk=pk)
 
 
 @login_required
 def my_projects(request):
     projects = request.user.projects.select_related('category').prefetch_related('images')
-    return render(request, 'projects/project_list.html', {'projects': projects, 'heading': 'My campaigns'})
+    return render(request, 'projects/project_list.html', {'projects': projects, 'heading': _('My campaigns')})
 
 
 @login_required

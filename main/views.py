@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
@@ -25,7 +26,7 @@ def api_register(request):
         send_activation_email(request, user)
         return JsonResponse({
             'success': True,
-            'message': 'Account created. Check your email to activate your account before logging in.'
+            'message': _('Account created. Check your email to activate your account before logging in.')
         })
     return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
@@ -43,12 +44,12 @@ def api_login(request):
     # Wrong password (or no such user) always gets the generic message —
     # only a *correct* password reveals the "please activate" state.
     if existing_user is None or not existing_user.check_password(password):
-        return JsonResponse({'success': False, 'error': 'Invalid email or password.'}, status=401)
+        return JsonResponse({'success': False, 'error': _('Invalid email or password.')}, status=401)
 
     if not existing_user.is_active:
         return JsonResponse({
             'success': False,
-            'error': 'Please activate your account via the link sent to your email before logging in.'
+            'error': _('Please activate your account via the link sent to your email before logging in.')
         }, status=403)
 
     user = authenticate(request, username=email, password=password)
@@ -56,7 +57,7 @@ def api_login(request):
         login(request, user)
         return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
 
-    return JsonResponse({'success': False, 'error': 'Invalid email or password.'}, status=401)
+    return JsonResponse({'success': False, 'error': _('Invalid email or password.')}, status=401)
 
 @login_required
 def logout_view(request):
@@ -74,13 +75,13 @@ def send_activation_email(request, user):
     token = account_activation_token.make_token(user)
     activation_link = f"http://{current_site.domain}/activate/{uid}/{token}/"
 
-    subject = "Activate your account"
-    message = (
-        f"Hi {user.first_name},\n\n"
-        f"Thanks for signing up. Click the link below to activate your account. "
-        f"This link expires in 24 hours.\n\n{activation_link}\n\n"
-        f"If you didn't create this account, you can ignore this email."
-    )
+    subject = _("Activate your account")
+    message = _(
+        "Hi %(name)s,\n\n"
+        "Thanks for signing up. Click the link below to activate your account. "
+        "This link expires in 24 hours.\n\n%(link)s\n\n"
+        "If you didn't create this account, you can ignore this email."
+    ) % {'name': user.first_name, 'link': activation_link}
     send_mail(subject, message, None, [user.email])
 
 def activate_account(request, uidb64, token):
@@ -132,7 +133,7 @@ def profile_view(request):
 def delete_account(request):
     user = request.user
     if not user.check_password(request.POST.get('password', '')):
-        request.session['delete_error'] = 'Incorrect password. Your account was not deleted.'
+        request.session['delete_error'] = _('Incorrect password. Your account was not deleted.')
         return redirect('profile')
     logout(request)
     user.delete()  # CASCADE also removes the linked Profile row

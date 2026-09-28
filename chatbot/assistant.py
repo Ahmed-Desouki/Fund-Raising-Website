@@ -41,7 +41,7 @@ def campaigns_context():
     """A compact, deterministic list of what's on the site right now."""
     now = timezone.now()
     lines = ['Categories: ' + ', '.join(Category.objects.values_list('name', flat=True))]
-    lines.append('Campaigns (title | category | raised / target EGP | days left | tags | path):')
+    lines.append('Campaigns (title / Arabic title | category | raised / target EGP | days left | tags | path):')
     projects = (
         Project.objects.filter(is_cancelled=False, end_time__gte=now)
         .select_related('category').prefetch_related('tags')
@@ -50,7 +50,7 @@ def campaigns_context():
     for p in projects:
         tags = ', '.join(sorted(t.name for t in p.tags.all()))
         lines.append(
-            f'- {p.title} | {p.category.name} | {p.total_donations:.0f} / {p.total_target:.0f} '
+            f'- {p.title}{" / " + p.title_ar if p.title_ar else ""} | {p.category.name} | {p.total_donations:.0f} / {p.total_target:.0f} '
             f'| {p.days_left} | {tags} | {reverse("project_detail", args=[p.pk])}'
         )
     if len(lines) == 2:

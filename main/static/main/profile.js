@@ -39,7 +39,7 @@ avatarInput.addEventListener("change", function () {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-        alert("Profile picture must be smaller than 5MB.");
+        alert((window.I18N && window.I18N.pictureTooBig) || "Profile picture must be smaller than 5MB.");
         this.value = "";
         return;
     }

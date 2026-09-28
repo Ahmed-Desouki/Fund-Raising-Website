@@ -137,3 +137,22 @@ class ProjectTests(TestCase):
         response = self.client.get(reverse('project_detail', args=[self.project.pk]))
         self.assertContains(response, 'Recent donations')
         self.assertContains(response, 'wa.me')
+
+    def test_site_switches_to_arabic(self):
+        self.project.title_ar = 'مياه نظيفة'
+        self.project.save()
+        self.client.post(reverse('set_language'), {'language': 'ar', 'next': '/'})
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, 'dir="rtl"')
+        self.assertContains(response, 'ابدأ حملة')          # interface text is translated
+        self.assertContains(response, 'مياه نظيفة')         # campaign shows its Arabic title
+        self.assertContains(response, '1,000')              # numbers keep the thousands separator
+
+    def test_english_falls_back_when_no_arabic_text(self):
+        self.client.post(reverse('set_language'), {'language': 'ar', 'next': '/'})
+        self.assertContains(self.client.get(reverse('project_detail', args=[self.project.pk])), 'Clean water')
+
+    def test_search_matches_arabic_title(self):
+        self.project.title_ar = 'مياه نظيفة'
+        self.project.save()
+        self.assertContains(self.client.get(reverse('search'), {'q': 'مياه'}), 'Clean water')

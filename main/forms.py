@@ -2,12 +2,13 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 from .models import Profile
 
 # Egyptian mobile numbers: 010 / 011 / 012 / 015 followed by 8 digits
 egyptian_mobile_validator = RegexValidator(
     regex=r'^01[0125][0-9]{8}$',
-    message='Enter a valid Egyptian mobile number (e.g. 01012345678).',
+    message=_('Enter a valid Egyptian mobile number (e.g. 01012345678).'),
 )
 
 
@@ -23,14 +24,14 @@ class RegisterForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
         if User.objects.filter(email__iexact=email).exists():
-            raise ValidationError("An account with this email already exists.")
+            raise ValidationError(_("An account with this email already exists."))
         return email
 
     def clean(self):
         cleaned_data = super().clean()
         p1, p2 = cleaned_data.get('password1'), cleaned_data.get('password2')
         if p1 and p2 and p1 != p2:
-            self.add_error('password2', "Passwords do not match.")
+            self.add_error('password2', _("Passwords do not match."))
         return cleaned_data
 
     def save(self):

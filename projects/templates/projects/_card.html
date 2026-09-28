@@ -1,23 +1,23 @@
-{% load humanize %}
+{% load humanize i18n %}
 <a href="{% url 'project_detail' project.pk %}" class="card">
     <div class="card-img">
         {% with cover=project.cover_image %}
             {% if cover %}<img src="{{ cover.image.url }}" alt="" loading="lazy">{% else %}<i class="fa-solid fa-hand-holding-heart"></i>{% endif %}
         {% endwith %}
-        <span class="card-cat">{{ project.category.name }}</span>
-        {% if project.is_cancelled %}<span class="badge">Cancelled</span>{% endif %}
+        <span class="card-cat">{% translate project.category.name %}</span>
+        {% if project.is_cancelled %}<span class="badge">{% translate "Cancelled" %}</span>{% endif %}
     </div>
     <div class="card-body">
-        <h3>{{ project.title }}</h3>
+        <h3>{{ project.display_title }}</h3>
         <div class="card-money">
-            <strong>{{ project.total_donations|floatformat:0|intcomma }} EGP</strong>
-            <span>raised of {{ project.total_target|floatformat:0|intcomma }}</span>
+            <strong>{{ project.total_donations|floatformat:0|intcomma }} {% translate "EGP" %}</strong>
+            <span>{% blocktranslate trimmed with target=project.total_target|floatformat:0|intcomma %}raised of {{ target }}{% endblocktranslate %}</span>
         </div>
         <div class="progress"><span style="width: {{ project.progress_percent }}%"></span></div>
         <div class="card-meta">
-            <span>{{ project.progress_percent }}% funded</span>
+            <span>{% blocktranslate trimmed with percent=project.progress_percent %}{{ percent }}% funded{% endblocktranslate %}</span>
             <span><i class="fa-regular fa-user"></i> {{ project.donor_count }}</span>
-            <span><i class="fa-regular fa-clock"></i> {{ project.days_left }}d left</span>
+            <span><i class="fa-regular fa-clock"></i> {% blocktranslate trimmed with days=project.days_left %}{{ days }}d left{% endblocktranslate %}</span>
         </div>
     </div>
 </a>

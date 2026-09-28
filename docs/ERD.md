@@ -59,7 +59,9 @@ erDiagram
         int owner_id FK
         int category_id FK
         string title
+        string title_ar "optional Arabic title"
         text details
+        text details_ar "optional Arabic story"
         decimal total_target "EGP"
         datetime start_time
         datetime end_time

@@ -1,0 +1,684 @@
+# Arabic translation of the Fundraiser site.
+# Edit this file, then run: python manage.py compile_translations
+msgid ""
+msgstr ""
+"Project-Id-Version: Fundraiser\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#, python-format
+msgid "%(counter)s campaign"
+msgid_plural "%(counter)s campaigns"
+msgstr[0] "لا توجد حملات"
+msgstr[1] "حملة واحدة"
+msgstr[2] "حملتان"
+msgstr[3] "%(counter)s حملات"
+msgstr[4] "%(counter)s حملة"
+msgstr[5] "%(counter)s حملة"
+
+#, python-format
+msgid "%(days)sd left"
+msgstr "باقي %(days)s يوم"
+
+#, python-format
+msgid "%(percent)s%% funded"
+msgstr "تم تمويل %(percent)s%%"
+
+#, python-format
+msgid "%(raised)s of %(target)s EGP"
+msgstr "%(raised)s من %(target)s جنيه"
+
+#, python-format
+msgid "%(since)s ago"
+msgstr "منذ %(since)s"
+
+#, python-format
+msgid "<strong>%(name)s</strong> donated %(amount)s EGP"
+msgstr "<strong>%(name)s</strong> تبرّع بـ %(amount)s جنيه"
+
+msgid "A clear title and story help people trust your campaign."
+msgstr "العنوان الواضح والقصة الحقيقية بيخلوا الناس تثق في حملتك."
+
+msgid "About your campaign"
+msgstr "عن حملتك"
+
+msgid "Account created. Check your email to activate your account before logging in."
+msgstr "تم إنشاء الحساب. افتح بريدك الإلكتروني وفعّل حسابك قبل تسجيل الدخول."
+
+msgid "Activate your account"
+msgstr "فعّل حسابك"
+
+msgid "Activation failed"
+msgstr "فشل التفعيل"
+
+msgid "Activation link is invalid or expired"
+msgstr "رابط التفعيل غير صالح أو انتهت صلاحيته"
+
+msgid "Active campaigns"
+msgstr "حملة نشطة"
+
+msgid "Add one or more photos. The first one is used as the cover."
+msgstr "أضف صورة أو أكثر. أول صورة هتكون صورة الغلاف."
+
+msgid "All campaigns"
+msgstr "كل الحملات"
+
+msgid "Already have an account?"
+msgstr "عندك حساب بالفعل؟"
+
+msgid "Amount"
+msgstr "المبلغ"
+
+msgid "Amount (EGP)"
+msgstr "المبلغ (جنيه)"
+
+msgid "An account with this email already exists."
+msgstr "يوجد حساب بهذا البريد الإلكتروني بالفعل."
+
+msgid "Arabic"
+msgstr "العربية"
+
+msgid "Art & Culture"
+msgstr "الفن والثقافة"
+
+msgid "At least 8 characters, not too common, not only numbers."
+msgstr "8 حروف على الأقل، ومش شائعة، ومش أرقام بس."
+
+msgid "Back to log in"
+msgstr "العودة لتسجيل الدخول"
+
+msgid "Back to registration"
+msgstr "العودة للتسجيل"
+
+msgid "Birthdate"
+msgstr "تاريخ الميلاد"
+
+msgid "Browse by category"
+msgstr "تصفّح حسب التصنيف"
+
+msgid "Browse campaigns"
+msgstr "تصفّح الحملات"
+
+#, python-format
+msgid "by %(name)s"
+msgstr "بواسطة %(name)s"
+
+msgid "Campaign"
+msgstr "الحملة"
+
+msgid "Campaigns can only be cancelled while donations are under 25% of the target."
+msgstr "ممكن تلغي الحملة بس طول ما التبرعات أقل من 25% من الهدف."
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Cancel campaign"
+msgstr "إلغاء الحملة"
+
+msgid "Cancel this campaign? This cannot be undone."
+msgstr "تلغي الحملة؟ مش هينفع ترجع فيها."
+
+msgid "Cancelled"
+msgstr "ملغاة"
+
+msgid "Category"
+msgstr "التصنيف"
+
+msgid "Charity"
+msgstr "الخير"
+
+msgid "Check your email"
+msgstr "راجع بريدك الإلكتروني"
+
+msgid "Choose a category"
+msgstr "اختر تصنيفاً"
+
+msgid "Choose a new password"
+msgstr "اختر كلمة مرور جديدة"
+
+msgid "Comment reported. Our team will review it."
+msgstr "تم الإبلاغ عن التعليق، وفريقنا هيراجعه."
+
+msgid "Comments"
+msgstr "التعليقات"
+
+msgid "Community"
+msgstr "المجتمع"
+
+msgid "Confirm new password"
+msgstr "تأكيد كلمة المرور الجديدة"
+
+msgid "Confirm Password"
+msgstr "تأكيد كلمة المرور"
+
+msgid "Confirm your password"
+msgstr "أعد كتابة كلمة المرور"
+
+msgid "Country"
+msgstr "الدولة"
+
+msgid "Create a password"
+msgstr "اختر كلمة مرور"
+
+msgid "Create Account"
+msgstr "إنشاء الحساب"
+
+msgid "Create your account"
+msgstr "أنشئ حسابك"
+
+msgid "Crowdfunding for charity and community projects in Egypt."
+msgstr "تمويل جماعي للمشروعات الخيرية والمجتمعية في مصر."
+
+msgid "Crowdfunding for Egypt"
+msgstr "تمويل جماعي لمصر"
+
+msgid "Date"
+msgstr "التاريخ"
+
+msgid "day left"
+msgid_plural "days left"
+msgstr[0] "يوم متبقٍ"
+msgstr[1] "يوم متبقٍ"
+msgstr[2] "يومان متبقيان"
+msgstr[3] "أيام متبقية"
+msgstr[4] "يوماً متبقياً"
+msgstr[5] "يوم متبقٍ"
+
+msgid "Delete account"
+msgstr "حذف الحساب"
+
+msgid "Delete my account"
+msgstr "احذف حسابي"
+
+msgid "Delete permanently"
+msgstr "حذف نهائي"
+
+msgid "Delete your account?"
+msgstr "تحذف حسابك؟"
+
+msgid "Didn't get it? Check your spam folder, or"
+msgstr "موصلكش؟ راجع مجلد الرسائل غير المرغوب فيها، أو"
+
+msgid "Don't have an account?"
+msgstr "معندكش حساب؟"
+
+msgid "Donate now"
+msgstr "تبرّع الآن"
+
+msgid "donor"
+msgid_plural "donors"
+msgstr[0] "متبرع"
+msgstr[1] "متبرع"
+msgstr[2] "متبرعان"
+msgstr[3] "متبرعين"
+msgstr[4] "متبرعاً"
+msgstr[5] "متبرع"
+
+msgid "Donors"
+msgstr "متبرع"
+
+msgid "e.g. 01012345678"
+msgstr "مثال: 01012345678"
+
+msgid "e.g. School supplies for 500 children"
+msgstr "مثال: أدوات مدرسية لـ 500 طفل"
+
+msgid "Edit profile"
+msgstr "تعديل البيانات"
+
+msgid "Education"
+msgstr "التعليم"
+
+msgid "EGP"
+msgstr "جنيه"
+
+msgid "EGP raised"
+msgstr "جنيه تم جمعها"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "End time must be after the start time."
+msgstr "تاريخ النهاية لازم يكون بعد تاريخ البداية."
+
+msgid "Ends"
+msgstr "تنتهي"
+
+msgid "English"
+msgstr "الإنجليزية"
+
+msgid "Enter a valid Egyptian mobile number (e.g. 01012345678)."
+msgstr "اكتب رقم موبايل مصري صحيح (مثال: 01012345678)."
+
+msgid "Enter a valid mobile number (e.g. 01012345678)."
+msgstr "اكتب رقم موبايل صحيح (مثال: 01012345678)."
+
+msgid "Enter the email you registered with and we'll send you a link to choose a new password."
+msgstr "اكتب البريد الإلكتروني اللي سجّلت بيه وهنبعتلك رابط تختار منه كلمة مرور جديدة."
+
+msgid "Enter your first name"
+msgstr "اكتب اسمك الأول"
+
+msgid "Enter your last name"
+msgstr "اكتب اسم العائلة"
+
+msgid "Enter your password"
+msgstr "اكتب كلمة المرور"
+
+msgid "Enter your password to confirm"
+msgstr "اكتب كلمة المرور للتأكيد"
+
+msgid "Environment"
+msgstr "البيئة"
+
+msgid "Facebook profile"
+msgstr "صفحة فيسبوك"
+
+msgid "Featured campaigns"
+msgstr "حملات مميزة"
+
+msgid "Find a campaign."
+msgstr "دوّر على حملة."
+
+msgid "First name"
+msgstr "الاسم الأول"
+
+msgid "First Name"
+msgstr "الاسم الأول"
+
+msgid "Forgot password"
+msgstr "نسيت كلمة المرور"
+
+msgid "Forgot password?"
+msgstr "نسيت كلمة المرور؟"
+
+msgid "Forgot your password?"
+msgstr "نسيت كلمة المرور؟"
+
+msgid "Fundraiser · Crowdfunding for Egypt"
+msgstr "Fundraiser · تمويل جماعي لمصر"
+
+msgid "Goal and dates"
+msgstr "الهدف والمواعيد"
+
+msgid "Health"
+msgstr "الصحة"
+
+msgid "health, children"
+msgstr "صحة، أطفال"
+
+#, python-format
+msgid "Hi %(name)s,"
+msgstr "أهلاً %(name)s،"
+
+#, python-format
+msgid ""
+"Hi %(name)s,\n"
+"\n"
+"Thanks for signing up. Click the link below to activate your account. This link expires in 24 hours.\n"
+"\n"
+"%(link)s\n"
+"\n"
+"If you didn't create this account, you can ignore this email."
+msgstr ""
+"أهلاً %(name)s،\n"
+"\n"
+"شكراً لتسجيلك. اضغط على الرابط التالي لتفعيل حسابك. الرابط صالح لمدة 24 ساعة.\n"
+"\n"
+"%(link)s\n"
+"\n"
+"لو ما عملتش الحساب ده، تجاهل الرسالة."
+
+msgid "Hide"
+msgstr "إخفاء"
+
+msgid "Home"
+msgstr "الرئيسية"
+
+msgid "If an account with that email exists, we've sent a link to reset your password. It expires in 24 hours."
+msgstr "لو فيه حساب بالبريد ده، بعتنالك رابط لتغيير كلمة المرور. الرابط صالح لمدة 24 ساعة."
+
+msgid "If you didn't ask for this, you can ignore this email; your password won't change."
+msgstr "لو ما طلبتش ده، تجاهل الرسالة وكلمة المرور مش هتتغير."
+
+msgid "Incorrect password. Your account was not deleted."
+msgstr "كلمة المرور غلط. الحساب ما اتحذفش."
+
+msgid "Invalid email or password."
+msgstr "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+
+msgid "ITI Django project · Team 2"
+msgstr "مشروع Django في ITI · الفريق 2"
+
+msgid "Join us and start making a difference."
+msgstr "انضم إلينا وابدأ في صنع الفرق."
+
+msgid "JPG, PNG (Max 5MB)"
+msgstr "JPG أو PNG (الحد الأقصى 5 ميجابايت)"
+
+msgid "Last name"
+msgstr "اسم العائلة"
+
+msgid "Last Name"
+msgstr "اسم العائلة"
+
+msgid "Latest campaigns"
+msgstr "أحدث الحملات"
+
+msgid "Link expired"
+msgstr "انتهت صلاحية الرابط"
+
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+msgid "Log In"
+msgstr "تسجيل الدخول"
+
+msgid "Log in to donate"
+msgstr "سجّل دخول للتبرع"
+
+msgid "Log in to your account and continue making an impact."
+msgstr "سجّل دخولك وكمّل مساهمتك في التغيير."
+
+msgid "Log out"
+msgstr "تسجيل الخروج"
+
+#, python-format
+msgid "Member since %(date)s"
+msgstr "عضو منذ %(date)s"
+
+msgid "Menu"
+msgstr "القائمة"
+
+msgid "Mobile number"
+msgstr "رقم الموبايل"
+
+msgid "Mobile Number"
+msgstr "رقم الموبايل"
+
+msgid "My campaigns"
+msgstr "حملاتي"
+
+msgid "My donations"
+msgstr "تبرعاتي"
+
+msgid "My Profile"
+msgstr "حسابي"
+
+msgid "My projects"
+msgstr "حملاتي"
+
+msgid "New password"
+msgstr "كلمة المرور الجديدة"
+
+msgid "Next"
+msgstr "التالي"
+
+msgid "No campaigns found."
+msgstr "لا توجد حملات."
+
+msgid "No campaigns yet."
+msgstr "لا توجد حملات بعد."
+
+msgid "No comments yet."
+msgstr "لا توجد تعليقات بعد."
+
+msgid "Not set"
+msgstr "غير محدد"
+
+msgid "OR"
+msgstr "أو"
+
+msgid "Password"
+msgstr "كلمة المرور"
+
+msgid "Password changed"
+msgstr "تم تغيير كلمة المرور"
+
+msgid "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a special character."
+msgstr "كلمة المرور لازم تكون 8 حروف على الأقل وفيها حرف كبير وحرف صغير ورمز خاص."
+
+msgid "Passwords do not match."
+msgstr "كلمتا المرور غير متطابقتين."
+
+msgid "Personal details"
+msgstr "البيانات الشخصية"
+
+msgid "Picked by our team"
+msgstr "اختيار فريقنا"
+
+msgid "Pictures"
+msgstr "الصور"
+
+msgid "Please activate your account via the link sent to your email before logging in."
+msgstr "فعّل حسابك من الرابط اللي وصلك على البريد الإلكتروني قبل تسجيل الدخول."
+
+msgid "Please enter a valid donation amount."
+msgstr "اكتب مبلغ تبرع صحيح."
+
+msgid "Please enter a valid email address."
+msgstr "اكتب بريداً إلكترونياً صحيحاً."
+
+msgid "Please register again to receive a new activation link."
+msgstr "سجّل مرة أخرى عشان يوصلك رابط تفعيل جديد."
+
+msgid "Post comment"
+msgstr "نشر التعليق"
+
+msgid "Previous"
+msgstr "السابق"
+
+msgid "Profile picture must be smaller than 5MB."
+msgstr "لازم الصورة تكون أصغر من 5 ميجابايت."
+
+msgid "Profile preview"
+msgstr "معاينة الصورة"
+
+msgid "Publish campaign"
+msgstr "نشر الحملة"
+
+#, python-format
+msgid "raised of %(target)s"
+msgstr "تم جمعها من %(target)s"
+
+#, python-format
+msgid "raised of %(target)s EGP target"
+msgstr "تم جمعها من هدف %(target)s جنيه"
+
+msgid "Recent donations"
+msgstr "آخر التبرعات"
+
+msgid "Register & Login"
+msgstr "التسجيل والدخول"
+
+msgid "Reply"
+msgstr "رد"
+
+msgid "Report"
+msgstr "إبلاغ"
+
+msgid "Report submitted. Our team will review it."
+msgstr "تم إرسال البلاغ، وفريقنا هيراجعه."
+
+msgid "Report this campaign"
+msgstr "الإبلاغ عن الحملة"
+
+msgid "Reset your Fundraiser password"
+msgstr "استعادة كلمة مرور حسابك في Fundraiser"
+
+#, python-format
+msgid "Results for “%(query)s”"
+msgstr "نتائج البحث عن «%(query)s»"
+
+msgid "Save changes"
+msgstr "حفظ التعديلات"
+
+msgid "Save new password"
+msgstr "حفظ كلمة المرور الجديدة"
+
+msgid "Search campaigns"
+msgstr "بحث في الحملات"
+
+msgid "Search campaigns or tags"
+msgstr "ابحث عن حملة أو وسم"
+
+msgid "See all"
+msgstr "عرض الكل"
+
+msgid "Send a new link"
+msgstr "إرسال رابط جديد"
+
+msgid "Send report"
+msgstr "إرسال البلاغ"
+
+msgid "Send reset link"
+msgstr "إرسال رابط الاستعادة"
+
+msgid "Separate tags with commas, e.g. health, children, education"
+msgstr "افصل بين الوسوم بفاصلة، مثال: صحة، أطفال، تعليم"
+
+msgid "Separate with commas. Used for search and similar campaigns."
+msgstr "افصل بينها بفاصلة. بتُستخدم في البحث والحملات المشابهة."
+
+msgid "Share:"
+msgstr "شارك:"
+
+msgid "Show"
+msgstr "إظهار"
+
+msgid "Sign up"
+msgstr "أنشئ حساباً"
+
+msgid "Similar campaigns"
+msgstr "حملات مشابهة"
+
+msgid "Small donations, <em>real change</em> in our communities."
+msgstr "تبرعات صغيرة، <em>وتغيير حقيقي</em> في مجتمعاتنا."
+
+msgid "Something went wrong. Please try again."
+msgstr "حصلت مشكلة، حاول مرة أخرى."
+
+msgid "Start a campaign"
+msgstr "ابدأ حملة"
+
+msgid "Start a campaign for a cause you care about, or support people already making a difference in schools, hospitals and villages across Egypt."
+msgstr "ابدأ حملة لقضية تهمك، أو ادعم ناس بتصنع فرق حقيقي في المدارس والمستشفيات والقرى في كل مصر."
+
+msgid "Start one"
+msgstr "ابدأ حملة"
+
+msgid "Start the first one."
+msgstr "ابدأ أول حملة."
+
+msgid "Starts"
+msgstr "تبدأ"
+
+msgid "Story"
+msgstr "القصة"
+
+msgid "Tags"
+msgstr "الوسوم"
+
+msgid "Target amount"
+msgstr "المبلغ المستهدف"
+
+msgid "Technology"
+msgstr "التكنولوجيا"
+
+msgid "Tell people what you're raising money for. You can share the link as soon as it's published."
+msgstr "قول للناس بتجمع فلوس لإيه. تقدر تشارك الرابط أول ما الحملة تتنشر."
+
+#, python-format
+msgid "Thank you for donating %(amount)s EGP!"
+msgstr "شكراً لتبرعك بـ %(amount)s جنيه!"
+
+msgid "Thanks for rating this campaign."
+msgstr "شكراً على تقييمك للحملة."
+
+msgid "This campaign is not accepting donations."
+msgstr "الحملة دي مش بتستقبل تبرعات."
+
+msgid "This campaign isn't accepting donations right now."
+msgstr "الحملة دي مش بتستقبل تبرعات حالياً."
+
+msgid "This campaign was cancelled by its owner."
+msgstr "صاحب الحملة ألغاها."
+
+msgid "This permanently removes your account and profile. This cannot be undone."
+msgstr "ده هيحذف حسابك وبياناتك نهائياً، ومش هينفع ترجع فيه."
+
+msgid "This reset link is invalid or has already been used."
+msgstr "رابط الاستعادة غير صالح أو تم استخدامه قبل كده."
+
+msgid "This will permanently remove your profile and cannot be undone."
+msgstr "ده هيحذف بياناتك نهائياً ومش هينفع ترجع فيه."
+
+msgid "Title"
+msgstr "العنوان"
+
+msgid "Top rated right now"
+msgstr "الأعلى تقييماً الآن"
+
+msgid "try again"
+msgstr "حاول مرة أخرى"
+
+msgid "Upload profile picture"
+msgstr "ارفع صورة شخصية"
+
+#, python-format
+msgid "We received a request to reset the password for your Fundraiser account (%(email)s). Click the link below to choose a new password. It expires in 24 hours."
+msgstr "وصلنا طلب لتغيير كلمة مرور حسابك في Fundraiser ‏(%(email)s). اضغط على الرابط التالي لاختيار كلمة مرور جديدة. الرابط صالح لمدة 24 ساعة."
+
+msgid "Welcome back!"
+msgstr "أهلاً بعودتك!"
+
+msgid "Who is this for, what will the money be spent on, and why does it matter?"
+msgstr "الحملة لمين، والفلوس هتتصرف في إيه، وليه ده مهم؟"
+
+msgid "Why are you reporting this comment?"
+msgstr "ليه بتبلّغ عن التعليق ده؟"
+
+msgid "Why are you reporting this?"
+msgstr "ليه بتبلّغ عن ده؟"
+
+msgid "Write a comment…"
+msgstr "اكتب تعليقاً…"
+
+msgid "Write a reply…"
+msgstr "اكتب رداً…"
+
+msgid "You haven't donated to a project yet."
+msgstr "لسه ما اتبرعتش لأي حملة."
+
+msgid "You haven't donated yet."
+msgstr "لسه ما اتبرعتش."
+
+msgid "You haven't started a project yet."
+msgstr "لسه ما بدأتش أي حملة."
+
+msgid "Your campaign has been cancelled."
+msgstr "تم إلغاء حملتك."
+
+msgid "Your campaign is live."
+msgstr "حملتك اتنشرت."
+
+msgid "Your password has been updated. You can now log in with your new password."
+msgstr "تم تحديث كلمة المرور. تقدر دلوقتي تسجّل دخول بكلمة المرور الجديدة."
+
+msgid "Your rating:"
+msgstr "تقييمك:"
+
+msgid "Add an Arabic version (optional)"
+msgstr "أضف نسخة بالعربي (اختياري)"
+
+msgid "Visitors who use the site in Arabic will see this text instead."
+msgstr "الزوار اللي بيستخدموا الموقع بالعربي هيشوفوا النص ده بدل الإنجليزي."
+
+msgid "Title in Arabic"
+msgstr "العنوان بالعربي"
+
+msgid "Story in Arabic"
+msgstr "القصة بالعربي"

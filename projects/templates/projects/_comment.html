@@ -1,12 +1,13 @@
-<p class="comment-head"><strong>{{ comment.user.first_name }} {{ comment.user.last_name }}</strong> <span class="muted">{{ comment.created_at|timesince }} ago</span></p>
+{% load i18n %}
+<p class="comment-head"><strong>{{ comment.user.get_full_name }}</strong> <span class="muted">{% blocktranslate trimmed with since=comment.created_at|timesince %}{{ since }} ago{% endblocktranslate %}</span></p>
 <p>{{ comment.content|linebreaksbr }}</p>
 {% if user.is_authenticated and comment.user != user %}
 <details class="inline-form">
-    <summary>Report</summary>
+    <summary>{% translate "Report" %}</summary>
     <form method="post" action="{% url 'report_comment' comment.pk %}">
         {% csrf_token %}
-        <textarea name="reason" rows="2" required placeholder="Why are you reporting this comment?"></textarea>
-        <button class="btn btn-sm btn-danger">Send report</button>
+        <textarea name="reason" rows="2" required placeholder="{% translate 'Why are you reporting this comment?' %}"></textarea>
+        <button class="btn btn-sm btn-danger">{% translate "Send report" %}</button>
     </form>
 </details>
 {% endif %}
