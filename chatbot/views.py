@@ -5,7 +5,7 @@ import time
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from . import assistant
+from . import assistant, fallback
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +15,6 @@ MAX_HISTORY_MESSAGES = 12
 RATE_LIMIT_MESSAGES = 20
 RATE_LIMIT_WINDOW_SECONDS = 60 * 60
 
-UNAVAILABLE = {
-    'ar': 'معلش، المساعد مش متاح دلوقتي. جرّب تاني بعد شوية.',
-    'en': "Sorry, the assistant isn't available right now. Please try again later.",
-}
 RATE_LIMITED = {
     'ar': 'بعت رسايل كتير في وقت قصير. استنى شوية وجرّب تاني.',
     'en': "You've sent a lot of messages. Please wait a while and try again.",
@@ -73,7 +69,8 @@ def ask(request):
     try:
         reply = assistant.ask(history, language)
     except assistant.AssistantUnavailable as e:
-        logger.warning('Chatbot unavailable: %s', e)
-        return JsonResponse({'error': UNAVAILABLE[language]}, status=503)
+        # Gemini is down or overloaded (common on the free tier): answer from the built-in help instead
+        logger.warning('Chatbot using built-in answers: %s', e)
+        return JsonResponse({'reply': fallback.answer(history[-1]['content'], language), 'fallback': True})
 
     return JsonResponse({'reply': reply})

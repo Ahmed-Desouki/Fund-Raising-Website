@@ -375,3 +375,7 @@ html[lang=ar] .card-cat, html[lang=ar] .eyebrow { letter-spacing: 0; }
 .arabic-version summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--primary); }
 .arabic-version .field { margin-top: 12px; }
 .arabic-version input, .arabic-version textarea { font-family: 'Cairo', sans-serif; }
+
+/* 404 / 500 pages */
+.error-page { text-align: center; padding: 48px 0; }
+.error-code { font: 600 72px "Fraunces", serif; color: var(--primary); margin: 0; line-height: 1; }

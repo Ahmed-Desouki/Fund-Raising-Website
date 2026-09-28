@@ -14,8 +14,8 @@ from django.utils import timezone
 from projects.models import Category, Project
 
 MAX_CAMPAIGNS_IN_CONTEXT = 30
-# Busy / rate limited / server error: worth trying the next model
-RETRYABLE_STATUS_CODES = {429, 500, 503}
+# Busy / rate limited / server error / model retired by Google: worth trying the next model
+RETRYABLE_STATUS_CODES = {404, 429, 500, 503}
 
 SYSTEM_PROMPT = """You are the help assistant for "Fundraiser", a crowdfunding website for charity and community projects in Egypt.
 
@@ -41,7 +41,7 @@ def campaigns_context():
     """A compact, deterministic list of what's on the site right now."""
     now = timezone.now()
     lines = ['Categories: ' + ', '.join(Category.objects.values_list('name', flat=True))]
-    lines.append('Campaigns (title / Arabic title | category | raised / target EGP | days left | tags | path):')
+    lines.append('Campaigns (title / Arabic title | category | raised / target EGP | % funded | average rating | status | tags | path):')
     projects = (
         Project.objects.filter(is_cancelled=False, end_time__gte=now)
         .select_related('category').prefetch_related('tags')
@@ -49,9 +49,15 @@ def campaigns_context():
     )
     for p in projects:
         tags = ', '.join(sorted(t.name for t in p.tags.all()))
+        # Give the model the computed numbers so it doesn't have to do (and get wrong) the maths
+        if p.start_time > now:
+            status = f'not open for donations yet, starts in {(p.start_time - now).days} days'
+        else:
+            status = f'open for donations, {p.days_left} days left'
         lines.append(
-            f'- {p.title}{" / " + p.title_ar if p.title_ar else ""} | {p.category.name} | {p.total_donations:.0f} / {p.total_target:.0f} '
-            f'| {p.days_left} | {tags} | {reverse("project_detail", args=[p.pk])}'
+            f'- {p.title}{" / " + p.title_ar if p.title_ar else ""} | {p.category.name} '
+            f'| {p.total_donations:.0f} / {p.total_target:.0f} | {p.progress_percent}% | {p.average_rating:.1f}/5 '
+            f'| {status} | {tags} | {reverse("project_detail", args=[p.pk])}'
         )
     if len(lines) == 2:
         lines.append('- (no active campaigns right now)')
@@ -71,7 +77,8 @@ def ask(history, language):
     if not api_key:
         raise AssistantUnavailable('GEMINI_API_KEY is not set')
 
-    client = genai.Client(api_key=api_key)
+    # Don't let a slow model keep the visitor waiting; the next model or the built-in answers take over
+    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=20_000))
     contents = [
         types.Content(role='model' if turn['role'] == 'assistant' else 'user', parts=[types.Part(text=turn['content'])])
         for turn in history

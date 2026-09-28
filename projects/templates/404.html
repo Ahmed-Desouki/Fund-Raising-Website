@@ -1,0 +1,11 @@
+{% extends 'projects/base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Page not found" %} · Fundraiser{% endblock %}
+{% block content %}
+<div class="narrow error-page">
+    <p class="error-code">404</p>
+    <h1 class="page-title">{% translate "Page not found" %}</h1>
+    <p class="muted">{% translate "The page you're looking for doesn't exist, or you don't have access to it." %}</p>
+    <p><a href="{% url 'home' %}" class="btn btn-primary">{% translate "Back to home" %}</a></p>
+</div>
+{% endblock %}

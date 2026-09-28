@@ -190,4 +190,4 @@ PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 24 hours, in seconds
 # Help chatbot (Google Gemini, free tier). Without a key the widget still shows but replies that it's unavailable.
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
 # Tried in order; later ones are used when an earlier one is overloaded or rate limited
-GEMINI_MODELS = config('GEMINI_MODELS', default='gemini-3.8-flash,gemini-flash-latest,gemini-flash-lite-latest', cast=Csv())
+GEMINI_MODELS = config('GEMINI_MODELS', default='gemini-3.8-flash,gemini-3.5-flash,gemini-flash-latest,gemini-3.1-flash-lite,gemini-flash-lite-latest', cast=Csv())

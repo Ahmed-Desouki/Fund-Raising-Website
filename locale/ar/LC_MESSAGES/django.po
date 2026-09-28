@@ -723,3 +723,18 @@ msgstr "موصلكش إيميل التفعيل؟"
 
 msgid "Send it again"
 msgstr "ابعته تاني"
+
+msgid "Page not found"
+msgstr "الصفحة مش موجودة"
+
+msgid "The page you're looking for doesn't exist, or you don't have access to it."
+msgstr "الصفحة اللي بتدور عليها مش موجودة، أو مش مسموحلك تفتحها."
+
+msgid "Back to home"
+msgstr "الرجوع للرئيسية"
+
+msgid "Something went wrong"
+msgstr "حصلت مشكلة"
+
+msgid "Sorry, something went wrong on our side. Please try again in a moment."
+msgstr "معلش، حصلت مشكلة عندنا. جرّب تاني بعد شوية."
