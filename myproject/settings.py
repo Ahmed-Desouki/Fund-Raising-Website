@@ -149,7 +149,7 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_USE_TLS = True
     EMAIL_TIMEOUT = 20
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'main.email.ReadableConsoleEmailBackend'
 
 
 # Auth redirects

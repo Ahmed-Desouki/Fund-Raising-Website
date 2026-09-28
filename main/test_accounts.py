@@ -226,3 +226,18 @@ class ProfileTests(TestCase):
         Donation.objects.create(project=project, user=self.user, amount=25)
         page = self.client.get(reverse('profile'))
         self.assertContains(page, 'Nour campaign', count=2)
+
+
+class ReadableConsoleEmailTests(TestCase):
+    def test_arabic_and_english_links_are_printed_readably(self):
+        from io import StringIO
+        from django.core.mail import EmailMessage
+        from .email import ReadableConsoleEmailBackend
+        link = 'http://127.0.0.1:8000/activate/MTA/dfmklj-b824541676c5ce77a155d7e842641cf8/'
+        for body in [f'أهلاً سلمى،\n\nاضغط على الرابط:\n\n{link}\n', f'Hi Salma,\n\nClick the link below to activate.\n\n{link}\n']:
+            stream = StringIO()
+            ReadableConsoleEmailBackend(stream=stream).send_messages([EmailMessage('Activate', body, None, ['s@x.com'])])
+            output = stream.getvalue()
+            self.assertIn(link, output)          # the whole link on one line, copyable
+            self.assertIn(body.split('\n')[0], output)
+            self.assertIn('To: s@x.com', output)
