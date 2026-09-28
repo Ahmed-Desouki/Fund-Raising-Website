@@ -83,3 +83,29 @@ class PasswordResetTests(TestCase):
     def test_reset_pages_render(self):
         for name in ['password_reset', 'password_reset_done', 'password_reset_complete']:
             self.assertEqual(self.client.get(reverse(name)).status_code, 200, name)
+
+
+class DeleteAccountTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('del@x.com', 'del@x.com', 'RightPass#1')
+        Profile.objects.create(user=self.user, mobile_number='01012345678')
+        self.client.force_login(self.user)
+
+    def test_wrong_password_keeps_account_and_shows_error(self):
+        response = self.client.post(reverse('delete_account'), {'password': 'wrong'})
+        self.assertRedirects(response, reverse('profile'), fetch_redirect_response=False)
+        self.assertTrue(User.objects.filter(pk=self.user.pk).exists())
+        page = self.client.get(reverse('profile'))
+        self.assertContains(page, 'Incorrect password')
+        # The error is shown once, not on every later visit
+        self.assertNotContains(self.client.get(reverse('profile')), 'Incorrect password')
+
+    def test_missing_password_keeps_account(self):
+        self.client.post(reverse('delete_account'))
+        self.assertTrue(User.objects.filter(pk=self.user.pk).exists())
+
+    def test_correct_password_deletes_account_and_profile(self):
+        response = self.client.post(reverse('delete_account'), {'password': 'RightPass#1'})
+        self.assertRedirects(response, reverse('auth_page'))
+        self.assertFalse(User.objects.filter(pk=self.user.pk).exists())
+        self.assertFalse(Profile.objects.exists())

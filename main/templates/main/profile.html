@@ -140,17 +140,20 @@
 
     </main>
 
-    <div id="deleteModal" class="modal-overlay" hidden>
+    <div id="deleteModal" class="modal-overlay" {% if not delete_error %}hidden{% endif %}>
         <div class="modal-box">
             <h2>Delete your account?</h2>
             <p>This will permanently remove your profile and cannot be undone.</p>
-            <div class="modal-actions">
-                <button type="button" id="cancelDelete" class="btn btn-ghost">Cancel</button>
-                <form method="POST" action="{% url 'delete_account' %}">
-                    {% csrf_token %}
+            <form method="POST" action="{% url 'delete_account' %}" class="delete-form">
+                {% csrf_token %}
+                <label for="deletePassword">Enter your password to confirm</label>
+                <input type="password" name="password" id="deletePassword" autocomplete="current-password" required>
+                {% if delete_error %}<small class="error">{{ delete_error }}</small>{% endif %}
+                <div class="modal-actions">
+                    <button type="button" id="cancelDelete" class="btn btn-ghost">Cancel</button>
                     <button type="submit" class="btn btn-danger">Delete permanently</button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 
