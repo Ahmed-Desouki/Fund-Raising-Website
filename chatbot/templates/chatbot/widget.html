@@ -1,0 +1,29 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'chatbot/widget.css' %}">
+
+<div id="chatbot" class="chatbot" data-url="{% url 'chatbot_ask' %}">
+    {% csrf_token %}
+    <button type="button" class="chatbot-toggle" id="chatbotToggle" aria-label="Open help chat">
+        <i class="fa-solid fa-comments"></i>
+    </button>
+
+    <section class="chatbot-panel" id="chatbotPanel" hidden>
+        <header class="chatbot-header">
+            <strong data-i18n="title">Help assistant</strong>
+            <div class="chatbot-lang" role="group" aria-label="Language">
+                <button type="button" data-lang="ar">عربي</button>
+                <button type="button" data-lang="en">English</button>
+            </div>
+            <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </header>
+
+        <div class="chatbot-messages" id="chatbotMessages" aria-live="polite"></div>
+
+        <form class="chatbot-form" id="chatbotForm">
+            <input type="text" id="chatbotInput" maxlength="1000" autocomplete="off" required>
+            <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </section>
+</div>
+
+<script src="{% static 'chatbot/widget.js' %}" defer></script>
