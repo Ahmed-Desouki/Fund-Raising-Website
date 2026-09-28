@@ -123,6 +123,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         formData.set("profile_picture", profilePicture.files[0]);
     }
 
+    // A double click used to send the form twice, creating the account twice and two emails
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton.disabled) return;
+    submitButton.disabled = true;
+
     try {
         const response = await fetch("/api/register/", {
             method: "POST",
@@ -151,6 +156,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         }
     } catch (err) {
         alert(T.somethingWrong);
+    } finally {
+        submitButton.disabled = false;
     }
 });
 
@@ -160,6 +167,10 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     const loginForm = this;
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
+
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+    if (submitButton.disabled) return;
+    submitButton.disabled = true;
 
     try {
         const response = await fetch("/api/login/", {
@@ -174,10 +185,12 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
         if (result.success) {
             window.location.href = result.redirect_url;
+            return;  // keep the button disabled while the next page loads
         } else {
             alert(result.error);
         }
     } catch (err) {
         alert(T.somethingWrong);
     }
+    submitButton.disabled = false;
 });

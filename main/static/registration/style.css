@@ -269,3 +269,5 @@ html[lang=ar] body, html[lang=ar] input, html[lang=ar] button, html[lang=ar] sel
 [dir=rtl] .camera { right: auto; left: 3px; }
 [dir=rtl] .password input { padding-right: 12px; padding-left: 55px; }
 [dir=rtl] .show-password { right: auto; left: 8px; }
+
+.main-button:disabled { opacity: .6; cursor: wait; }
