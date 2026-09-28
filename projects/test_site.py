@@ -241,3 +241,27 @@ class WholeSiteSmokeTests(TestCase):
         out = StringIO()
         call_command('compile_translations', stdout=out)
         self.assertIn('0 missing', out.getvalue())
+
+
+@override_settings(DEBUG=False, ALLOWED_HOSTS=['testserver'])
+class ErrorPageTests(TestCase):
+    def test_404_page_uses_site_design_in_both_languages(self):
+        response = self.client.get('/projects/999999/')
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, 'Page not found', status_code=404)
+        self.client.post(reverse('set_language'), {'language': 'ar', 'next': '/'})
+        response = self.client.get('/projects/999999/')
+        self.assertContains(response, 'الصفحة مش موجودة', status_code=404)
+        self.assertContains(response, 'dir="rtl"', status_code=404)
+
+    def test_500_page_renders_in_the_active_language(self):
+        from django.template.loader import render_to_string
+        from django.utils import translation
+        with translation.override('en'):
+            html = render_to_string('500.html')
+            self.assertIn('Something went wrong', html)
+            self.assertIn('lang="en"', html)
+        with translation.override('ar'):
+            html = render_to_string('500.html')
+            self.assertIn('حصلت مشكلة', html)
+            self.assertIn('dir="rtl"', html)
