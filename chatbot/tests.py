@@ -179,6 +179,10 @@ class BuiltInAnswerTests(TestCase):
         self.assertIn('90%', reply)
         self.assertNotIn('Future project', reply)
 
+    def test_unknown_campaign_is_not_invented(self):
+        self.assertIn("couldn't find a campaign", self.answer('Tell me about the campaign for a hospital on the Moon'))
+        self.assertIn('ملقتش حملة', self.answer('فيه حملة لبناء مستشفى على القمر؟', 'ar'))
+
     def test_always_says_it_is_a_quick_answer(self):
         self.assertIn('quick answer', self.answer('hello'))
         self.assertIn('رد سريع', self.answer('ازيك', 'ar'))

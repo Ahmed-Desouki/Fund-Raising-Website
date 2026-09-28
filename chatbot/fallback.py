@@ -78,6 +78,11 @@ RECOMMEND_INTRO = {
     'en': 'Here are campaigns you might like:',
     'ar': 'دي حملات ممكن تعجبك:',
 }
+NO_MATCH = {
+    'en': "I couldn't find a campaign about that on the site right now. Try the search bar, or browse the categories on the home page.",
+    'ar': 'ملقتش حملة عن الموضوع ده على الموقع دلوقتي. جرّب خانة البحث، أو تصفّح التصنيفات في الصفحة الرئيسية.',
+}
+ASKS_FOR_CAMPAIGN = ['campaign', 'project', 'recommend', 'حمله', 'حملات', 'مشروع', 'رشح']
 CLOSEST_INTRO = {
     'en': 'These campaigns are closest to their goal:',
     'ar': 'دي الحملات الأقرب لهدفها:',
@@ -133,6 +138,9 @@ def answer(message, language):
             lines.append(ANSWERS[intent][language])
         if matches:
             lines += [RECOMMEND_INTRO[language]] + [describe(p, language) for p in matches]
+        elif not intent and any(normalize(w) in text for w in ASKS_FOR_CAMPAIGN):
+            # Asked about a campaign we don't have: say so instead of inventing one
+            lines.append(NO_MATCH[language])
         if not lines:
             lines.append(ANSWERS['help'][language])
 
