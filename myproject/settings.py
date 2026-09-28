@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'projects',
+    'chatbot',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -142,3 +143,8 @@ CSRF_COOKIE_HTTPONLY = False  # JS needs to read this cookie to send the X-CSRFT
 # Governs the expiry window for both account-activation links and (later) password-reset links
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 24 hours, in seconds
 DEFAULT_FROM_EMAIL = 'noreply@yourfundraiser.com'
+
+# Help chatbot (Google Gemini, free tier). Without a key the widget still shows but replies that it's unavailable.
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+# Tried in order; later ones are used when an earlier one is overloaded or rate limited
+GEMINI_MODELS = config('GEMINI_MODELS', default='gemini-3.8-flash,gemini-flash-latest,gemini-flash-lite-latest', cast=Csv())
