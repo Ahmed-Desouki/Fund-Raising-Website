@@ -66,7 +66,7 @@ class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
         fields = ['amount']
-        widgets = {'amount': forms.NumberInput(attrs={'min': 1, 'step': '0.01', 'placeholder': 'Amount (EGP)'})}
+        widgets = {'amount': forms.NumberInput(attrs={'min': 1, 'step': '1', 'placeholder': 'Amount (EGP)'})}
 
 
 class CommentForm(forms.Form):
