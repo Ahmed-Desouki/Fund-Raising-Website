@@ -2,6 +2,7 @@
 {% block title %}{{ heading }} · Fundraiser{% endblock %}
 {% block content %}
 <h1 class="page-title">{{ heading }}</h1>
+<p class="muted">{{ projects|length }} campaign{{ projects|length|pluralize }}</p>
 <div class="grid">
     {% for project in projects %}{% include 'projects/_card.html' %}
     {% empty %}<p class="empty">No campaigns found.</p>{% endfor %}

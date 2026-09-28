@@ -288,3 +288,19 @@ body {
 .delete-form label { font-size: 14px; font-weight: 500; }
 .delete-form input { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
 .delete-form .modal-actions { margin-top: 8px; }
+
+/* Header matching projects/base.html */
+.topbar { position: sticky; top: 0; z-index: 50; padding: 12px 32px; border-bottom-color: #E6DFE9; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; color: var(--text); text-decoration: none; }
+.brand-mark { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--primary); color: var(--white); font-size: 16px; }
+.top-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.top-nav a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 8px; color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; }
+.top-nav a:hover { background: #EFE8F3; color: var(--primary); }
+.top-nav a i { color: var(--muted); }
+.top-nav .top-cta { background: var(--primary); color: var(--white); font-size: 13px; font-weight: 600; }
+.top-nav .top-cta i, .top-nav .top-cta:hover { color: var(--white); background: var(--primary-dark); }
+@media (max-width: 700px) {
+    .topbar { flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+    .top-nav a:not(.top-cta) { font-size: 0; gap: 0; }
+    .top-nav a i { font-size: 16px; }
+}

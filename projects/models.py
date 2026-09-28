@@ -8,6 +8,17 @@ from django.urls import reverse
 from django.utils import timezone
 
 
+CATEGORY_ICONS = {
+    'education': 'fa-graduation-cap',
+    'health': 'fa-heart-pulse',
+    'charity': 'fa-hands-holding-child',
+    'environment': 'fa-leaf',
+    'technology': 'fa-laptop-code',
+    'community': 'fa-people-roof',
+    'art & culture': 'fa-palette',
+}
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -17,6 +28,11 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def icon(self):
+        # Font Awesome icon for the home page; admin-added categories get a generic one
+        return CATEGORY_ICONS.get(self.name.lower(), 'fa-hand-holding-heart')
 
 
 class Tag(models.Model):
