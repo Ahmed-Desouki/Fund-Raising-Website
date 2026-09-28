@@ -122,7 +122,7 @@ LANGUAGES = [
 ]
 LOCALE_PATHS = [BASE_DIR / 'locale']
 FORMAT_MODULE_PATH = ['myproject.formats']
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Cairo'
 USE_I18N = True
 USE_TZ = True
 
@@ -163,6 +163,16 @@ LOGOUT_REDIRECT_URL = 'auth_page'
 # Flip these to True once you're serving over HTTPS in production
 
 SESSION_COOKIE_HTTPONLY = True
+
+# Serving the site for real (DEBUG=False) means HTTPS: cookies only over HTTPS, redirect http -> https.
+# Set SECURE_SSL_REDIRECT=False in .env if the host already handles that.
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=3600, cast=int)
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 CSRF_COOKIE_HTTPONLY = False  # JS needs to read this cookie to send the X-CSRFToken header
 
 # Governs the expiry window for both account-activation links and (later) password-reset links

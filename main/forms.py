@@ -6,6 +6,14 @@ from django.utils.translation import gettext_lazy as _
 from .models import Profile
 
 # Egyptian mobile numbers: 010 / 011 / 012 / 015 followed by 8 digits
+MAX_IMAGE_MB = 5
+
+
+def max_image_size(image):
+    if image and image.size > MAX_IMAGE_MB * 1024 * 1024:
+        raise ValidationError(_('Images must be smaller than %(size)s MB.') % {'size': MAX_IMAGE_MB})
+
+
 egyptian_mobile_validator = RegexValidator(
     regex=r'^01[0125][0-9]{8}$',
     message=_('Enter a valid Egyptian mobile number (e.g. 01012345678).'),
@@ -19,11 +27,13 @@ class RegisterForm(forms.Form):
     mobile_number = forms.CharField(max_length=11, validators=[egyptian_mobile_validator])
     password1 = forms.CharField()
     password2 = forms.CharField()
-    profile_picture = forms.ImageField(required=False)
+    profile_picture = forms.ImageField(required=False, validators=[max_image_size])
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        if User.objects.filter(email__iexact=email).exists():
+        # An account that was never activated doesn't block the email: registering again
+        # replaces it and sends a fresh activation link
+        if User.objects.filter(email__iexact=email, is_active=True).exists():
             raise ValidationError(_("An account with this email already exists."))
         return email
 
@@ -36,6 +46,7 @@ class RegisterForm(forms.Form):
 
     def save(self):
         email = self.cleaned_data['email']
+        User.objects.filter(email__iexact=email, is_active=False).delete()
         user = User.objects.create_user(
             username=email,
             email=email,
@@ -55,7 +66,7 @@ class ProfileEditForm(forms.Form):
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
     mobile_number = forms.CharField(max_length=11, validators=[egyptian_mobile_validator])
-    profile_picture = forms.ImageField(required=False)
+    profile_picture = forms.ImageField(required=False, validators=[max_image_size])
     birthdate = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     facebook_profile = forms.URLField(required=False)
     country = forms.CharField(max_length=100, required=False)
@@ -65,7 +76,7 @@ class ProfileEditForm(forms.Form):
         user.last_name = self.cleaned_data['last_name']
         user.save()
 
-        profile = user.profile
+        profile, _created = Profile.objects.get_or_create(user=user, defaults={'mobile_number': ''})
         profile.mobile_number = self.cleaned_data['mobile_number']
         if self.cleaned_data.get('profile_picture'):
             profile.profile_picture = self.cleaned_data['profile_picture']

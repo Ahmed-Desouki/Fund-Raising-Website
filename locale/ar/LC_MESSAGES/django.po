@@ -682,3 +682,13 @@ msgstr "العنوان بالعربي"
 
 msgid "Story in Arabic"
 msgstr "القصة بالعربي"
+
+msgid "We couldn't send the activation email. Please try again in a few minutes."
+msgstr "مقدرناش نبعت إيميل التفعيل. حاول تاني بعد دقايق."
+
+#, python-format
+msgid "Images must be smaller than %(size)s MB."
+msgstr "لازم الصور تكون أصغر من %(size)s ميجابايت."
+
+msgid "End time must be in the future."
+msgstr "تاريخ النهاية لازم يكون في المستقبل."
