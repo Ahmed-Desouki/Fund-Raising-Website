@@ -271,3 +271,7 @@ html[lang=ar] body, html[lang=ar] input, html[lang=ar] button, html[lang=ar] sel
 [dir=rtl] .show-password { right: auto; left: 8px; }
 
 .main-button:disabled { opacity: .6; cursor: wait; }
+
+.resend { margin-top: 14px; font-size: 14px; text-align: center; color: #7A7080; }
+.resend button { border: 0; background: none; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: underline; font: inherit; }
+.resend button:disabled { opacity: .6; cursor: wait; }

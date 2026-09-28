@@ -73,18 +73,33 @@ Open http://127.0.0.1:8000
 The demo accounts' password is `DEMO_PASSWORD` in `projects/management/commands/seed_demo.py`.
 `seed_demo --reset` recreates the 8 demo campaigns. They are realistic examples, not real fundraisers; their photos are real, freely licensed pictures from Wikimedia Commons (credits in `projects/demo_images/CREDITS.md`).
 
-### Activation emails
+### Emails (activation link, password reset)
 
-By default, emails are printed in the terminal where `runserver` is running. Copy the activation link from there.
-
-To really send them through Gmail, add to `.env`:
+The site emails **the person who registers**, at the address they signed up with. Emails are sent *from*
+the account in `.env`:
 
 ```
 EMAIL_HOST_USER=you@gmail.com
 EMAIL_HOST_PASSWORD=your 16-letter App Password
 ```
 
-Create the App Password at https://myaccount.google.com/apppasswords (needs 2-Step Verification). It must belong to the same Gmail account as `EMAIL_HOST_USER`. Never use your normal Gmail password.
+Create the App Password at https://myaccount.google.com/apppasswords (needs 2-Step Verification) on the
+**same** Gmail account as `EMAIL_HOST_USER`. Never use your normal Gmail password. Restart `runserver`
+after changing `.env`.
+
+Check the settings in one step; it sends a real test email and explains any error:
+
+```bash
+python manage.py send_test_email someone@example.com
+```
+
+Without these two settings nothing is sent: emails are printed in the `runserver` terminal instead,
+with the link on its own line under `Links:`.
+
+- The first emails to a new address often land in **Spam**; mark one as "Not spam" and the rest arrive in the inbox.
+- Didn't get it? Try to log in: the login page offers **"Send it again"** for accounts that aren't activated yet.
+- Another email service (Brevo, Outlook, a university server...) only needs different settings, no code changes:
+  `EMAIL_HOST`, `EMAIL_PORT` (587 TLS or 465 SSL), and `EMAIL_FROM` if the sending address differs from the login.
 
 ## Optional settings (`.env`)
 
@@ -93,7 +108,8 @@ Create the App Password at https://myaccount.google.com/apppasswords (needs 2-St
 | `GEMINI_API_KEY` | Turns on the chatbot. Free key: https://aistudio.google.com/apikey. Without it the bot says it's unavailable. |
 | `GEMINI_MODELS` | Comma-separated models tried in order. Default: `gemini-3.8-flash,gemini-flash-latest,gemini-flash-lite-latest` |
 | `DATABASE_URL` | Use PostgreSQL instead of SQLite, e.g. `postgresql://user:password@localhost:5432/fundraiser` |
-| `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` | Send real emails through Gmail (see above) |
+| `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` | Send real emails (see above) |
+| `EMAIL_HOST` / `EMAIL_PORT` / `EMAIL_FROM` | Use another email service instead of Gmail |
 | `ALLOWED_HOSTS` | Comma-separated hosts, default `127.0.0.1,localhost` |
 
 Never commit `.env`; it's in `.gitignore`.
