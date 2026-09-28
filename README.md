@@ -8,6 +8,7 @@ ITI Django final project (team 2). People can start fundraising campaigns for ch
 - Register with name, email, password, Egyptian mobile number and profile picture
 - Email activation link, valid for 24 hours. You can't log in before activating
 - Log in with email and password
+- Forgot password: reset link by email, valid for 24 hours and single-use
 - Profile: edit everything except email, with optional birthdate, Facebook profile and country. Shows your campaigns and donations
 - Delete account, with a confirmation step
 
