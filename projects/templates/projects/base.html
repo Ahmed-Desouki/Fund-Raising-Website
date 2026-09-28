@@ -13,22 +13,34 @@
 </head>
 <body>
     <header class="topbar">
-        <a href="{% url 'home' %}" class="brand">Fundraiser</a>
-        <form action="{% url 'search' %}" method="get" class="search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" name="q" value="{{ query|default:'' }}" placeholder="Search by title or tag">
-        </form>
-        <nav>
-            {% if user.is_authenticated %}
-                <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Start a campaign</a>
-                <a href="{% url 'my_projects' %}">My campaigns</a>
-                <a href="{% url 'my_donations' %}">My donations</a>
-                <a href="{% url 'profile' %}">Profile</a>
-                <a href="{% url 'logout' %}">Log out</a>
-            {% else %}
-                <a href="{% url 'auth_page' %}" class="btn btn-primary btn-sm">Log in</a>
-            {% endif %}
-        </nav>
+        <div class="topbar-inner">
+            <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><i class="fa-solid fa-hand-holding-heart"></i></span>Fundraiser</a>
+
+            <form action="{% url 'search' %}" method="get" class="search" role="search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" name="q" value="{{ query|default:'' }}" placeholder="Search campaigns or tags" aria-label="Search campaigns">
+            </form>
+
+            <button type="button" class="menu-toggle" aria-label="Menu" aria-expanded="false" onclick="const open = document.body.classList.toggle('menu-open'); this.setAttribute('aria-expanded', open);">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <nav class="nav">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'my_projects' %}" class="nav-link{% if request.resolver_match.url_name == 'my_projects' %} active{% endif %}"><i class="fa-regular fa-folder-open"></i> My campaigns</a>
+                    <a href="{% url 'my_donations' %}" class="nav-link{% if request.resolver_match.url_name == 'my_donations' %} active{% endif %}"><i class="fa-regular fa-heart"></i> My donations</a>
+                    <a href="{% url 'profile' %}" class="nav-link nav-user">
+                        {% if user.profile.profile_picture %}<img src="{{ user.profile.profile_picture.url }}" alt="">{% else %}<span class="nav-avatar">{{ user.first_name|first|upper }}</span>{% endif %}
+                        {{ user.first_name }}
+                    </a>
+                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Start a campaign</a>
+                    <a href="{% url 'logout' %}" class="nav-link nav-logout" title="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i><span> Log out</span></a>
+                {% else %}
+                    <a href="{% url 'auth_page' %}" class="nav-link">Log in</a>
+                    <a href="{% url 'auth_page' %}" class="btn btn-primary btn-sm">Start a campaign</a>
+                {% endif %}
+            </nav>
+        </div>
     </header>
 
     {% if messages %}
@@ -38,6 +50,22 @@
     {% endif %}
 
     <main class="page">{% block content %}{% endblock %}</main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div>
+                <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><i class="fa-solid fa-hand-holding-heart"></i></span>Fundraiser</a>
+                <p class="muted">Crowdfunding for charity and community projects in Egypt.</p>
+            </div>
+            <div class="footer-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'search' %}">Browse campaigns</a>
+                <a href="{% if user.is_authenticated %}{% url 'project_create' %}{% else %}{% url 'auth_page' %}{% endif %}">Start a campaign</a>
+            </div>
+            <p class="muted footer-note">ITI Django project · Team 2</p>
+        </div>
+    </footer>
+
     {% include 'chatbot/widget.html' %}
 </body>
 </html>

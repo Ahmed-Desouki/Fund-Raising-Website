@@ -45,21 +45,37 @@ COMMENTS = [
 ]
 
 
-def make_image(color, label):
-    img = Image.new('RGB', (1200, 700), color)
+def make_image(color, variant=0):
+    """A soft gradient with large decorative circles (no text: the page already shows the title)."""
+    width, height = 1200, 800
+    dark = tuple(max(c - 60, 0) for c in color)
+    light = tuple(min(c + 70, 255) for c in color)
+    img = Image.new('RGB', (width, height), color)
     draw = ImageDraw.Draw(img)
-    for i in range(0, 1200, 60):
-        draw.line([(i, 700), (i + 350, 0)], fill=tuple(min(c + 25, 255) for c in color), width=18)
-    draw.text((40, 640), label, fill=(255, 255, 255))
+    for y in range(height):
+        t = y / height
+        draw.line([(0, y), (width, y)], fill=tuple(int(light[i] * (1 - t) + dark[i] * t) for i in range(3)))
+    # Decorative circles, placed differently for each picture of the same campaign
+    circle = tuple(min(c + 25, 255) for c in color)
+    offsets = [(900, -150, 420), (-200, 450, 380), (700, 500, 300)]
+    for n, (x, y, r) in enumerate(offsets):
+        x += variant * 90 * (1 if n % 2 else -1)
+        draw.ellipse([x - r, y - r, x + r, y + r], outline=circle, width=40)
     buf = BytesIO()
-    img.save(buf, 'JPEG', quality=85)
+    img.save(buf, 'JPEG', quality=88)
     return ContentFile(buf.getvalue())
 
 
 class Command(BaseCommand):
     help = 'Create demo users and campaigns for local development'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--reset', action='store_true', help='Delete the demo campaigns first and recreate them')
+
     def handle(self, *args, **options):
+        if options['reset']:
+            Project.objects.filter(title__in=[p[0] for p in PROJECTS]).delete()
+
         users = []
         for email, first, last, mobile in USERS:
             user, created = User.objects.get_or_create(
@@ -88,8 +104,7 @@ class Command(BaseCommand):
             )
             project.tags.set([Tag.objects.get_or_create(name=t)[0] for t in tags])
             for n in range(3):
-                shade = tuple(max(c - n * 25, 0) for c in color)
-                ProjectImage(project=project).image.save(f'demo_{i}_{n}.jpg', make_image(shade, title), save=True)
+                ProjectImage(project=project).image.save(f'demo_{i}_{n}.jpg', make_image(color, variant=n), save=True)
 
             donors = [u for u in users if u != owner]
             for j, donor in enumerate(donors):

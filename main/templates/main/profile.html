@@ -14,13 +14,12 @@
 <body>
 
     <header class="topbar">
-        <a href="{% url 'dashboard' %}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
-        <nav>
-            <a href="{% url 'my_projects' %}" class="back-link">My campaigns</a>
-            &nbsp;·&nbsp;
-            <a href="{% url 'my_donations' %}" class="back-link">My donations</a>
-            &nbsp;·&nbsp;
-            <a href="{% url 'logout' %}" class="back-link">Log out</a>
+        <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><i class="fa-solid fa-hand-holding-heart"></i></span>Fundraiser</a>
+        <nav class="top-nav">
+            <a href="{% url 'my_projects' %}"><i class="fa-regular fa-folder-open"></i> My campaigns</a>
+            <a href="{% url 'my_donations' %}"><i class="fa-regular fa-heart"></i> My donations</a>
+            <a href="{% url 'project_create' %}" class="top-cta"><i class="fa-solid fa-plus"></i> Start a campaign</a>
+            <a href="{% url 'logout' %}" title="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
         </nav>
     </header>
 

@@ -3,18 +3,86 @@
 {% block content %}
 <div class="narrow">
     <h1 class="page-title">Start a campaign</h1>
+    <p class="muted">Tell people what you're raising money for. You can share the link as soon as it's published.</p>
+
     <form method="post" enctype="multipart/form-data" class="form">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        {% for field in form %}
-            <div class="field">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
-                {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}
+        {% for error in form.non_field_errors %}<p class="message error">{{ error }}</p>{% endfor %}
+
+        <section class="form-card">
+            <h2>About your campaign</h2>
+            <p class="help">A clear title and story help people trust your campaign.</p>
+            <div class="form">
+                <div class="field">
+                    <label for="id_title">Title</label>
+                    <input type="text" name="title" id="id_title" maxlength="200" value="{{ form.title.value|default:'' }}" placeholder="e.g. School supplies for 500 children" required>
+                    {% for error in form.title.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                </div>
+                <div class="field">
+                    <label for="id_details">Story</label>
+                    <textarea name="details" id="id_details" rows="7" placeholder="Who is this for, what will the money be spent on, and why does it matter?" required>{{ form.details.value|default:'' }}</textarea>
+                    {% for error in form.details.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                </div>
+                <div class="form-row">
+                    <div class="field">
+                        <label for="id_category">Category</label>
+                        <select name="category" id="id_category" required>
+                            <option value="">Choose a category</option>
+                            {% for value, label in form.fields.category.choices %}{% if value %}
+                                <option value="{{ value }}" {% if form.category.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}{% endfor %}
+                        </select>
+                        {% for error in form.category.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="field">
+                        <label for="id_tags">Tags</label>
+                        <input type="text" name="tags" id="id_tags" value="{{ form.tags.value|default:'' }}" placeholder="health, children">
+                        <small class="help">Separate with commas. Used for search and similar campaigns.</small>
+                        {% for error in form.tags.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
             </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Publish campaign</button>
+        </section>
+
+        <section class="form-card">
+            <h2>Goal and dates</h2>
+            <div class="form">
+                <div class="field">
+                    <label for="id_total_target">Target amount</label>
+                    <div class="input-prefix">
+                        <span>EGP</span>
+                        <input type="number" name="total_target" id="id_total_target" min="1" step="0.01" value="{{ form.total_target.value|default:'' }}" placeholder="250000" required>
+                    </div>
+                    {% for error in form.total_target.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                </div>
+                <div class="form-row">
+                    <div class="field">
+                        <label for="id_start_time">Starts</label>
+                        <input type="datetime-local" name="start_time" id="id_start_time" value="{{ form.start_time.value|default:''|slice:':16' }}" required>
+                        {% for error in form.start_time.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="field">
+                        <label for="id_end_time">Ends</label>
+                        <input type="datetime-local" name="end_time" id="id_end_time" value="{{ form.end_time.value|default:''|slice:':16' }}" required>
+                        {% for error in form.end_time.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-card">
+            <h2>Pictures</h2>
+            <p class="help">Add one or more photos. The first one is used as the cover.</p>
+            <div class="field">
+                <input type="file" name="images" id="id_images" accept="image/*" multiple required>
+                {% for error in form.images.errors %}<small class="error">{{ error }}</small>{% endfor %}
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <a href="{% url 'home' %}" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary">Publish campaign</button>
+        </div>
     </form>
 </div>
 {% endblock %}

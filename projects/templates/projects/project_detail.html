@@ -1,4 +1,5 @@
 {% extends 'projects/base.html' %}
+{% load humanize %}
 {% block title %}{{ project.title }} · Fundraiser{% endblock %}
 {% block content %}
 <div class="detail">
@@ -70,7 +71,7 @@
 
     <aside class="detail-side">
         <div class="panel">
-            <p class="raised"><strong>{{ project.total_donations|floatformat:0 }} EGP</strong> raised of {{ project.total_target|floatformat:0 }}</p>
+            <p class="raised"><strong>{{ project.total_donations|floatformat:0|intcomma }} EGP</strong> raised of {{ project.total_target|floatformat:0|intcomma }} EGP target</p>
             <div class="progress"><span style="width: {{ project.progress_percent }}%"></span></div>
             <p class="muted">{{ project.progress_percent }}% funded · {{ project.average_rating|floatformat:1 }} <i class="fa-solid fa-star"></i> ({{ project.ratings.count }})</p>
             <div class="stats">
@@ -88,7 +89,7 @@
                         {% endfor %}
                     </div>
                     {{ donation_form.amount }}
-                    <button class="btn btn-primary">Donate</button>
+                    <button class="btn btn-primary btn-block"><i class="fa-solid fa-heart"></i> Donate now</button>
                 </form>
                 {% else %}
                 <p class="muted">This campaign isn't accepting donations right now.</p>
@@ -120,7 +121,7 @@
                 </details>
                 {% endif %}
             {% else %}
-                <a href="{% url 'auth_page' %}" class="btn btn-primary">Log in to donate</a>
+                <a href="{% url 'auth_page' %}" class="btn btn-primary btn-block">Log in to donate</a>
             {% endif %}
 
             <div class="share">
@@ -135,7 +136,7 @@
         <div class="panel recent">
             <h3>Recent donations</h3>
             {% for donation in recent_donations %}
-                <p><strong>{{ donation.user.first_name }} {{ donation.user.last_name }}</strong> donated {{ donation.amount|floatformat:0 }} EGP <span class="muted">· {{ donation.created_at|timesince }} ago</span></p>
+                <p><strong>{{ donation.user.first_name }} {{ donation.user.last_name }}</strong> donated {{ donation.amount|floatformat:0|intcomma }} EGP <span class="muted">· {{ donation.created_at|timesince }} ago</span></p>
             {% endfor %}
         </div>
         {% endif %}

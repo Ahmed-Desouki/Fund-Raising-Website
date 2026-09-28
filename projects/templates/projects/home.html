@@ -1,44 +1,84 @@
 {% extends 'projects/base.html' %}
-{% block title %}Home · Fundraiser{% endblock %}
+{% load humanize %}
+{% block title %}Fundraiser · Crowdfunding for Egypt{% endblock %}
 {% block content %}
 
-{% if top_rated %}
-<section class="slider">
-    <div class="slides" id="slides">
-        {% for project in top_rated %}
-        <a href="{% url 'project_detail' project.pk %}" class="slide">
-            {% with cover=project.cover_image %}{% if cover %}<img src="{{ cover.image.url }}" alt="">{% endif %}{% endwith %}
-            <div class="slide-text">
-                <span class="card-cat">Top rated · {{ project.avg_rating|floatformat:1 }} <i class="fa-solid fa-star"></i></span>
-                <h2>{{ project.title }}</h2>
-                <p>{{ project.details|truncatewords:25 }}</p>
-            </div>
-        </a>
-        {% endfor %}
+<section class="hero">
+    <div class="hero-text">
+        <span class="eyebrow">Crowdfunding for Egypt</span>
+        <h1>Small donations, <em>real change</em> in our communities.</h1>
+        <p>Start a campaign for a cause you care about, or support people already making a difference in schools, hospitals and villages across Egypt.</p>
+        <div class="hero-actions">
+            <a href="{% if user.is_authenticated %}{% url 'project_create' %}{% else %}{% url 'auth_page' %}{% endif %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Start a campaign</a>
+            <a href="{% url 'search' %}" class="btn btn-outline">Browse campaigns</a>
+        </div>
     </div>
-    <button class="slide-btn prev" onclick="slide(-1)" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
-    <button class="slide-btn next" onclick="slide(1)" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+    <dl class="hero-stats">
+        <div><dt>EGP raised</dt><dd>{{ stats.raised|floatformat:0|intcomma }}</dd></div>
+        <div><dt>Active campaigns</dt><dd>{{ stats.campaigns|intcomma }}</dd></div>
+        <div><dt>Donors</dt><dd>{{ stats.donors|intcomma }}</dd></div>
+    </dl>
+</section>
+
+{% if top_rated %}
+<section>
+    <div class="section-head">
+        <h2 class="section-title">Top rated right now</h2>
+    </div>
+    <div class="slider">
+        <div class="slides" id="slides">
+            {% for project in top_rated %}
+            <a href="{% url 'project_detail' project.pk %}" class="slide">
+                {% with cover=project.cover_image %}{% if cover %}<img src="{{ cover.image.url }}" alt="">{% endif %}{% endwith %}
+                <div class="slide-text">
+                    <span class="pill"><i class="fa-solid fa-star"></i> {{ project.avg_rating|floatformat:1 }} · {{ project.category.name }}</span>
+                    <h3>{{ project.title }}</h3>
+                    <p>{{ project.details|truncatewords:22 }}</p>
+                    <div class="slide-progress">
+                        <div class="progress"><span style="width: {{ project.progress_percent }}%"></span></div>
+                        <span>{{ project.total_donations|floatformat:0|intcomma }} of {{ project.total_target|floatformat:0|intcomma }} EGP</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        <button class="slide-btn prev" onclick="slide(-1)" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slide-btn next" onclick="slide(1)" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="slide-dots" id="slideDots">
+            {% for project in top_rated %}<button type="button" aria-label="Slide {{ forloop.counter }}" onclick="goTo({{ forloop.counter0 }})"></button>{% endfor %}
+        </div>
+    </div>
 </section>
 <script>
     let current = 0;
-    function slide(dir) {
-        const slides = document.getElementById('slides');
-        current = (current + dir + slides.children.length) % slides.children.length;
+    const slides = document.getElementById('slides');
+    const dots = document.querySelectorAll('#slideDots button');
+    function goTo(i) {
+        current = (i + slides.children.length) % slides.children.length;
         slides.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, n) => d.classList.toggle('active', n === current));
     }
+    function slide(dir) { goTo(current + dir); }
+    goTo(0);
     setInterval(() => slide(1), 6000);
 </script>
 {% endif %}
 
 {% if featured %}
 <section>
-    <h2 class="section-title">Featured campaigns</h2>
+    <div class="section-head">
+        <h2 class="section-title">Featured campaigns</h2>
+        <span class="muted">Picked by our team</span>
+    </div>
     <div class="grid">{% for project in featured %}{% include 'projects/_card.html' %}{% endfor %}</div>
 </section>
 {% endif %}
 
 <section>
-    <h2 class="section-title">Latest campaigns</h2>
+    <div class="section-head">
+        <h2 class="section-title">Latest campaigns</h2>
+        <a href="{% url 'search' %}" class="see-all">See all <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
     <div class="grid">
         {% for project in latest %}{% include 'projects/_card.html' %}
         {% empty %}<p class="empty">No campaigns yet. <a href="{% url 'project_create' %}">Start the first one.</a></p>{% endfor %}
@@ -47,10 +87,16 @@
 
 {% if categories %}
 <section>
-    <h2 class="section-title">Browse by category</h2>
-    <div class="chips">
+    <div class="section-head">
+        <h2 class="section-title">Browse by category</h2>
+    </div>
+    <div class="categories">
         {% for category in categories %}
-            <a href="{% url 'category_projects' category.pk %}" class="chip">{{ category.name }} <span>{{ category.project_count }}</span></a>
+            <a href="{% url 'category_projects' category.pk %}" class="category">
+                <i class="fa-solid {{ category.icon }}"></i>
+                <span>{{ category.name }}</span>
+                <small>{{ category.project_count }} campaign{{ category.project_count|pluralize }}</small>
+            </a>
         {% endfor %}
     </div>
 </section>

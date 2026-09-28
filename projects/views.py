@@ -1,12 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import CommentForm, DonationForm, ProjectForm, RatingForm, ReportForm
-from .models import Category, Comment, CommentReport, Project, ProjectReport, Rating
+from .models import Category, Comment, CommentReport, Donation, Project, ProjectReport, Rating
 
 
 def active_projects():
@@ -27,6 +27,11 @@ def home(request):
         'latest': active_projects().order_by('-created_at')[:5],
         'featured': active_projects().filter(is_featured=True).order_by('-created_at')[:5],
         'categories': Category.objects.annotate(project_count=Count('projects', filter=Q(projects__is_cancelled=False))),
+        'stats': {
+            'raised': Donation.objects.filter(project__is_cancelled=False).aggregate(total=Sum('amount'))['total'] or 0,
+            'campaigns': active_projects().count(),
+            'donors': Donation.objects.values('user').distinct().count(),
+        },
     }
     return render(request, 'projects/home.html', context)
 
@@ -39,12 +44,13 @@ def category_projects(request, pk):
 
 def search(request):
     query = request.GET.get('q', '').strip()
-    projects = Project.objects.none()
+    projects = active_projects()
     if query:
-        projects = active_projects().filter(Q(title__icontains=query) | Q(tags__name__iexact=query)).distinct()
+        projects = projects.filter(Q(title__icontains=query) | Q(tags__name__iexact=query)).distinct()
     return render(request, 'projects/project_list.html', {
         'projects': projects,
-        'heading': f'Results for “{query}”' if query else 'Search',
+        # An empty search doubles as "browse all campaigns"
+        'heading': f'Results for “{query}”' if query else 'All campaigns',
         'query': query,
     })
 
