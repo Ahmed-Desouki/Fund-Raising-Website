@@ -1,18 +1,17 @@
 import logging
+import time
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from .forms import RegisterForm
+from .emails import send_activation_email
 from .tokens import account_activation_token
 
 logger = logging.getLogger(__name__)
@@ -39,7 +38,7 @@ def api_register(request):
             }, status=503)
         return JsonResponse({
             'success': True,
-            'message': _('Account created. Check your email to activate your account before logging in.')
+            'message': _('Account created. We sent an activation link to %(email)s. Check your inbox and Spam folder.') % {'email': user.email},
         })
     return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
@@ -59,7 +58,8 @@ def api_login(request):
     if not existing_user.is_active:
         return JsonResponse({
             'success': False,
-            'error': _('Please activate your account via the link sent to your email before logging in.')
+            'error': _('Please activate your account via the link sent to your email before logging in.'),
+            'inactive': True,
         }, status=403)
 
     user = authenticate(request, username=existing_user.email, password=password)
@@ -79,20 +79,30 @@ def logout_view(request):
 def dashboard_view(request):
     return redirect('home')
 
-def send_activation_email(request, user):
-    current_site = get_current_site(request)
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = account_activation_token.make_token(user)
-    activation_link = f"{request.scheme}://{current_site.domain}{reverse('activate', args=[uid, token])}"
+RESEND_LIMIT = 3
+RESEND_WINDOW_SECONDS = 10 * 60
 
-    subject = _("Activate your account")
-    message = _(
-        "Hi %(name)s,\n\n"
-        "Thanks for signing up. Click the link below to activate your account. "
-        "This link expires in 24 hours.\n\n%(link)s\n\n"
-        "If you didn't create this account, you can ignore this email."
-    ) % {'name': user.first_name, 'link': activation_link}
-    send_mail(subject, message, None, [user.email])
+
+@require_POST
+def api_resend_activation(request):
+    """Send a new activation link to an account that hasn't been activated yet."""
+    # Same answer whatever happens, so this can't be used to find out which emails are registered
+    answer = JsonResponse({'success': True, 'message': _(
+        'If that account is waiting for activation, a new link is on its way. Check your inbox and Spam folder.')})
+
+    now = time.time()
+    recent = [t for t in request.session.get('resend_times', []) if now - t < RESEND_WINDOW_SECONDS]
+    if len(recent) >= RESEND_LIMIT:
+        return JsonResponse({'success': False, 'error': _('Too many requests. Please wait a few minutes and try again.')}, status=429)
+    request.session['resend_times'] = recent + [now]
+
+    user = User.objects.filter(email__iexact=request.POST.get('email') or '', is_active=False).first()
+    if user is not None:
+        try:
+            send_activation_email(request, user)
+        except Exception:
+            logger.exception('Could not resend the activation email to %s', user.email)
+    return answer
 
 def activate_account(request, uidb64, token):
     try:

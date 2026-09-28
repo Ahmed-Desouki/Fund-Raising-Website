@@ -118,7 +118,7 @@ class RegistrationFlowTests(TestCase):
         self.assertIn('profile_picture', response.json()['errors'])
 
     def test_email_failure_does_not_leave_a_stuck_account(self):
-        with mock.patch('main.views.send_mail', side_effect=OSError('SMTP down')):
+        with mock.patch('main.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP down')):
             response = self.register()
         self.assertEqual(response.status_code, 503)
         self.assertFalse(User.objects.exists())

@@ -136,20 +136,28 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Email (console backend prints emails to your terminal instead of sending them — fine for dev)
 
-# With EMAIL_HOST_USER / EMAIL_HOST_PASSWORD in .env, emails are really sent through Gmail
-# (EMAIL_HOST_PASSWORD is a Gmail App Password, not the account password).
-# Without them, emails are printed in the runserver terminal instead.
+# Email. With EMAIL_HOST_USER / EMAIL_HOST_PASSWORD in .env, emails are really sent over SMTP
+# to the person who registers; without them they're printed in the runserver terminal.
+# Defaults are for Gmail (EMAIL_HOST_PASSWORD is a Gmail App Password, not the account password).
+# Any other SMTP service works by changing EMAIL_HOST / EMAIL_PORT, e.g. Brevo:
+#   EMAIL_HOST=smtp-relay.brevo.com  EMAIL_PORT=587  EMAIL_FROM=you@yourdomain.com
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='').replace(' ', '')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=EMAIL_PORT == 465, cast=bool)
+EMAIL_USE_TLS = not EMAIL_USE_SSL
+EMAIL_TIMEOUT = 20
 
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
-    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-    EMAIL_USE_TLS = True
-    EMAIL_TIMEOUT = 20
 else:
     EMAIL_BACKEND = 'main.email.ReadableConsoleEmailBackend'
+
+# The address emails come from. Gmail requires it to be the Gmail account itself;
+# services like Brevo log in with one user and send from a verified address.
+EMAIL_FROM = config('EMAIL_FROM', default=EMAIL_HOST_USER or 'noreply@fundraiser.local')
+DEFAULT_FROM_EMAIL = f'Fundraiser <{EMAIL_FROM}>'
 
 
 # Auth redirects
@@ -177,7 +185,7 @@ CSRF_COOKIE_HTTPONLY = False  # JS needs to read this cookie to send the X-CSRFT
 
 # Governs the expiry window for both account-activation links and (later) password-reset links
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 24 hours, in seconds
-DEFAULT_FROM_EMAIL = f'Fundraiser <{EMAIL_HOST_USER}>' if EMAIL_HOST_USER else 'noreply@yourfundraiser.com'
+
 
 # Help chatbot (Google Gemini, free tier). Without a key the widget still shows but replies that it's unavailable.
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')

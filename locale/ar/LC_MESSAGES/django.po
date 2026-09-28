@@ -692,3 +692,34 @@ msgstr "لازم الصور تكون أصغر من %(size)s ميجابايت."
 
 msgid "End time must be in the future."
 msgstr "تاريخ النهاية لازم يكون في المستقبل."
+
+msgid "If the button doesn't work, copy this link into your browser:"
+msgstr "لو الزرار مش شغال، انسخ الرابط ده وافتحه في المتصفح:"
+
+msgid "Thanks for signing up. Click the button below to activate your account. This link expires in 24 hours."
+msgstr "شكراً لتسجيلك. اضغط على الزرار اللي تحت عشان تفعّل حسابك. الرابط صالح لمدة 24 ساعة."
+
+msgid "Activate my account"
+msgstr "فعّل حسابي"
+
+msgid "If you didn't create this account, you can ignore this email."
+msgstr "لو ما عملتش الحساب ده، تجاهل الرسالة."
+
+msgid "We received a request to reset your password. Click the button below to choose a new one. This link expires in 24 hours."
+msgstr "وصلنا طلب لتغيير كلمة المرور. اضغط على الزرار اللي تحت عشان تختار كلمة مرور جديدة. الرابط صالح لمدة 24 ساعة."
+
+msgid "If that account is waiting for activation, a new link is on its way. Check your inbox and Spam folder."
+msgstr "لو الحساب ده مستني التفعيل، هيوصلك رابط جديد. راجع صندوق الوارد ومجلد الـ Spam."
+
+msgid "Too many requests. Please wait a few minutes and try again."
+msgstr "طلبات كتير. استنى دقايق وجرّب تاني."
+
+#, python-format
+msgid "Account created. We sent an activation link to %(email)s. Check your inbox and Spam folder."
+msgstr "تم إنشاء الحساب. بعتنا رابط التفعيل على %(email)s. راجع صندوق الوارد ومجلد الـ Spam."
+
+msgid "Didn't get the activation email?"
+msgstr "موصلكش إيميل التفعيل؟"
+
+msgid "Send it again"
+msgstr "ابعته تاني"

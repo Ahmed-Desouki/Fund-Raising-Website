@@ -1,0 +1,24 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ subject }}</title></head>
+<body style="margin:0;padding:0;background:#F7F3F0;font-family:Arial,Helvetica,sans-serif;color:#27212B;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#F7F3F0;padding:32px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;background:#FFFFFF;border-radius:14px;overflow:hidden;">
+        <tr><td style="background:#5B3A70;padding:20px 28px;color:#FFFFFF;font-size:20px;font-weight:bold;">Fundraiser</td></tr>
+        <tr><td style="padding:28px;font-size:15px;line-height:1.6;{% if LANGUAGE_BIDI %}text-align:right;{% endif %}">
+          <p style="margin:0 0 16px;">{% blocktranslate trimmed with name=name %}Hi {{ name }},{% endblocktranslate %}</p>
+          <p style="margin:0 0 24px;">{{ intro }}</p>
+          <p style="margin:0 0 24px;text-align:center;">
+            <a href="{{ link }}" style="display:inline-block;background:#5B3A70;color:#FFFFFF;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:bold;">{{ button }}</a>
+          </p>
+          <p style="margin:0 0 8px;font-size:13px;color:#7A7080;">{% translate "If the button doesn't work, copy this link into your browser:" %}</p>
+          <p style="margin:0 0 24px;font-size:13px;word-break:break-all;" dir="ltr"><a href="{{ link }}" style="color:#5B3A70;">{{ link }}</a></p>
+          <p style="margin:0;font-size:13px;color:#7A7080;">{{ footer }}</p>
+        </td></tr>
+      </table>
+      <p style="font-size:12px;color:#7A7080;margin:16px 0 0;">{% translate "Crowdfunding for charity and community projects in Egypt." %}</p>
+    </td></tr>
+  </table>
+</body>
+</html>

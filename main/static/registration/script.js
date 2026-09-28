@@ -188,9 +188,29 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             return;  // keep the button disabled while the next page loads
         } else {
             alert(result.error);
+            // Not activated yet: offer to send the activation email again
+            document.getElementById("resendBox").classList.toggle("hidden", !result.inactive);
         }
     } catch (err) {
         alert(T.somethingWrong);
     }
     submitButton.disabled = false;
+});
+document.getElementById("resendButton").addEventListener("click", async function() {
+    const button = this;
+    if (button.disabled) return;
+    button.disabled = true;
+    try {
+        const response = await fetch("/api/resend-activation/", {
+            method: "POST",
+            headers: { "X-CSRFToken": getCSRFToken(), "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ email: document.getElementById("loginEmail").value }),
+        });
+        const result = await response.json();
+        alert(result.message || result.error);
+    } catch (err) {
+        alert(T.somethingWrong);
+    } finally {
+        button.disabled = false;
+    }
 });

@@ -111,6 +111,12 @@
                 <button class="main-button" type="submit">{% translate "Log In" %}</button>
             </form>
 
+            {# Shown when someone tries to log in to an account that isn't activated yet #}
+            <p id="resendBox" class="resend hidden">
+                {% translate "Didn't get the activation email?" %}
+                <button type="button" id="resendButton">{% translate "Send it again" %}</button>
+            </p>
+
             <div class="divider"><span>{% translate "OR" %}</span></div>
 
             <p class="switch">{% translate "Don't have an account?" %} <a href="#" id="registerLink">{% translate "Sign up" %}</a></p>

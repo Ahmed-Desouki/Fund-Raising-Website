@@ -8,6 +8,7 @@ password_reset_views = [
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='main/password_reset_form.html',
         email_template_name='main/password_reset_email.txt',
+        html_email_template_name='main/emails/password_reset.html',
         subject_template_name='main/password_reset_subject.txt',
     ), name='password_reset'),
     path('password-reset/sent/', auth_views.PasswordResetDoneView.as_view(
@@ -31,4 +32,5 @@ urlpatterns = [
 
     path('api/register/', views.api_register, name='api_register'),
     path('api/login/', views.api_login, name='api_login'),
+    path('api/resend-activation/', views.api_resend_activation, name='api_resend_activation'),
 ] + password_reset_views
