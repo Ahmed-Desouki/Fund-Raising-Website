@@ -1,13 +1,13 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
+    <title>{% translate "My Profile" %} · Fundraiser</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/profile.css' %}">
 </head>
@@ -16,10 +16,11 @@
     <header class="topbar">
         <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><i class="fa-solid fa-hand-holding-heart"></i></span>Fundraiser</a>
         <nav class="top-nav">
-            <a href="{% url 'my_projects' %}"><i class="fa-regular fa-folder-open"></i> My campaigns</a>
-            <a href="{% url 'my_donations' %}"><i class="fa-regular fa-heart"></i> My donations</a>
-            <a href="{% url 'project_create' %}" class="top-cta"><i class="fa-solid fa-plus"></i> Start a campaign</a>
-            <a href="{% url 'logout' %}" title="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+            <a href="{% url 'my_projects' %}"><i class="fa-regular fa-folder-open"></i> {% translate "My campaigns" %}</a>
+            <a href="{% url 'my_donations' %}"><i class="fa-regular fa-heart"></i> {% translate "My donations" %}</a>
+            <a href="{% url 'project_create' %}" class="top-cta"><i class="fa-solid fa-plus"></i> {% translate "Start a campaign" %}</a>
+            <a href="{% url 'logout' %}" title="{% translate 'Log out' %}"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+            {% include 'main/_language_switch.html' %}
         </nav>
     </header>
 
@@ -40,20 +41,20 @@
             <div class="identity-text">
                 <h1>{{ request.user.first_name }} {{ request.user.last_name }}</h1>
                 <p class="identity-email">{{ request.user.email }}</p>
-                <p class="identity-meta">Member since {{ request.user.date_joined|date:"F Y" }}</p>
+                <p class="identity-meta">{% blocktranslate trimmed with date=request.user.date_joined|date:"F Y" %}Member since {{ date }}{% endblocktranslate %}</p>
             </div>
 
-            <button type="button" id="editToggle" class="btn btn-primary">Edit profile</button>
+            <button type="button" id="editToggle" class="btn btn-primary">{% translate "Edit profile" %}</button>
         </section>
 
         <form method="POST" enctype="multipart/form-data" id="profileForm">
             {% csrf_token %}
 
             <section class="ledger">
-                <h2>Personal details</h2>
+                <h2>{% translate "Personal details" %}</h2>
 
                 <div class="ledger-row">
-                    <label for="id_first_name">First name</label>
+                    <label for="id_first_name">{% translate "First name" %}</label>
                     <div class="ledger-value">
                         <input type="text" id="id_first_name" name="first_name" value="{{ form.first_name.value|default:'' }}" readonly required>
                         {% for error in form.first_name.errors %}<small class="error">{{ error }}</small>{% endfor %}
@@ -61,7 +62,7 @@
                 </div>
 
                 <div class="ledger-row">
-                    <label for="id_last_name">Last name</label>
+                    <label for="id_last_name">{% translate "Last name" %}</label>
                     <div class="ledger-value">
                         <input type="text" id="id_last_name" name="last_name" value="{{ form.last_name.value|default:'' }}" readonly required>
                         {% for error in form.last_name.errors %}<small class="error">{{ error }}</small>{% endfor %}
@@ -69,7 +70,7 @@
                 </div>
 
                 <div class="ledger-row">
-                    <label for="id_mobile_number">Mobile number</label>
+                    <label for="id_mobile_number">{% translate "Mobile number" %}</label>
                     <div class="ledger-value">
                         <input type="tel" id="id_mobile_number" name="mobile_number" value="{{ form.mobile_number.value|default:'' }}" readonly required>
                         {% for error in form.mobile_number.errors %}<small class="error">{{ error }}</small>{% endfor %}
@@ -77,85 +78,86 @@
                 </div>
 
                 <div class="ledger-row">
-                    <label for="id_country">Country</label>
+                    <label for="id_country">{% translate "Country" %}</label>
                     <div class="ledger-value">
-                        <input type="text" id="id_country" name="country" value="{{ form.country.value|default:'' }}" readonly placeholder="Not set">
+                        <input type="text" id="id_country" name="country" value="{{ form.country.value|default:'' }}" readonly placeholder="{% translate 'Not set' %}">
                     </div>
                 </div>
 
                 <div class="ledger-row">
-                    <label for="id_birthdate">Birthdate</label>
+                    <label for="id_birthdate">{% translate "Birthdate" %}</label>
                     <div class="ledger-value">
                         <input type="date" id="id_birthdate" name="birthdate" value="{{ form.birthdate.value|default:'' }}" readonly>
                     </div>
                 </div>
 
                 <div class="ledger-row">
-                    <label for="id_facebook_profile">Facebook profile</label>
+                    <label for="id_facebook_profile">{% translate "Facebook profile" %}</label>
                     <div class="ledger-value">
-                        <input type="url" id="id_facebook_profile" name="facebook_profile" value="{{ form.facebook_profile.value|default:'' }}" readonly placeholder="Not set">
+                        <input type="url" id="id_facebook_profile" name="facebook_profile" value="{{ form.facebook_profile.value|default:'' }}" readonly placeholder="{% translate 'Not set' %}">
                         {% for error in form.facebook_profile.errors %}<small class="error">{{ error }}</small>{% endfor %}
                     </div>
                 </div>
             </section>
 
             <div class="form-actions" id="formActions" hidden>
-                <button type="submit" class="btn btn-primary">Save changes</button>
-                <button type="button" id="cancelEdit" class="btn btn-ghost">Cancel</button>
+                <button type="submit" class="btn btn-primary">{% translate "Save changes" %}</button>
+                <button type="button" id="cancelEdit" class="btn btn-ghost">{% translate "Cancel" %}</button>
             </div>
         </form>
 
         <section class="ledger">
-            <h2>My projects</h2>
+            <h2>{% translate "My projects" %}</h2>
             {% for project in request.user.projects.all %}
                 <div class="ledger-row">
-                    <a href="{% url 'project_detail' project.pk %}">{{ project.title }}</a>
-                    <div class="ledger-value">{{ project.total_donations|floatformat:0 }} / {{ project.total_target|floatformat:0 }} EGP{% if project.is_cancelled %} · Cancelled{% endif %}</div>
+                    <a href="{% url 'project_detail' project.pk %}">{{ project.display_title }}</a>
+                    <div class="ledger-value">{{ project.total_donations|floatformat:0 }} / {{ project.total_target|floatformat:0 }} {% translate "EGP" %}{% if project.is_cancelled %} · {% translate "Cancelled" %}{% endif %}</div>
                 </div>
             {% empty %}
-                <p class="empty-state">You haven't started a project yet. <a href="{% url 'project_create' %}">Start one</a></p>
+                <p class="empty-state">{% translate "You haven't started a project yet." %} <a href="{% url 'project_create' %}">{% translate "Start one" %}</a></p>
             {% endfor %}
         </section>
 
         <section class="ledger">
-            <h2>My donations</h2>
+            <h2>{% translate "My donations" %}</h2>
             {% for donation in request.user.donations.all %}
                 <div class="ledger-row">
-                    <a href="{% url 'project_detail' donation.project.pk %}">{{ donation.project.title }}</a>
-                    <div class="ledger-value">{{ donation.amount|floatformat:0 }} EGP · {{ donation.created_at|date:"M j, Y" }}</div>
+                    <a href="{% url 'project_detail' donation.project.pk %}">{{ donation.project.display_title }}</a>
+                    <div class="ledger-value">{{ donation.amount|floatformat:0 }} {% translate "EGP" %} · {{ donation.created_at|date:"M j, Y" }}</div>
                 </div>
             {% empty %}
-                <p class="empty-state">You haven't donated to a project yet.</p>
+                <p class="empty-state">{% translate "You haven't donated to a project yet." %}</p>
             {% endfor %}
         </section>
 
         <section class="danger-zone">
             <div>
-                <h2>Delete account</h2>
-                <p>This permanently removes your account and profile. This cannot be undone.</p>
+                <h2>{% translate "Delete account" %}</h2>
+                <p>{% translate "This permanently removes your account and profile. This cannot be undone." %}</p>
             </div>
-            <button type="button" id="openDeleteModal" class="btn btn-danger">Delete my account</button>
+            <button type="button" id="openDeleteModal" class="btn btn-danger">{% translate "Delete my account" %}</button>
         </section>
 
     </main>
 
     <div id="deleteModal" class="modal-overlay" {% if not delete_error %}hidden{% endif %}>
         <div class="modal-box">
-            <h2>Delete your account?</h2>
-            <p>This will permanently remove your profile and cannot be undone.</p>
+            <h2>{% translate "Delete your account?" %}</h2>
+            <p>{% translate "This will permanently remove your profile and cannot be undone." %}</p>
             <form method="POST" action="{% url 'delete_account' %}" class="delete-form">
                 {% csrf_token %}
-                <label for="deletePassword">Enter your password to confirm</label>
+                <label for="deletePassword">{% translate "Enter your password to confirm" %}</label>
                 <input type="password" name="password" id="deletePassword" autocomplete="current-password" required>
                 {% if delete_error %}<small class="error">{{ delete_error }}</small>{% endif %}
                 <div class="modal-actions">
-                    <button type="button" id="cancelDelete" class="btn btn-ghost">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete permanently</button>
+                    <button type="button" id="cancelDelete" class="btn btn-ghost">{% translate "Cancel" %}</button>
+                    <button type="submit" class="btn btn-danger">{% translate "Delete permanently" %}</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <script>window.I18N = { pictureTooBig: "{% translate 'Profile picture must be smaller than 5MB.' as t %}{{ t|escapejs }}" };</script>
     <script src="{% static 'main/profile.js' %}"></script>
     {% include 'chatbot/widget.html' %}
 </body>

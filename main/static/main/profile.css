@@ -304,3 +304,17 @@ body {
     .top-nav a:not(.top-cta) { font-size: 0; gap: 0; }
     .top-nav a i { font-size: 16px; }
 }
+
+/* ---------- Language switch & Arabic (right-to-left) ---------- */
+.lang-switch { margin: 0; }
+.lang-switch button {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    padding: 7px 12px; border-radius: 8px; border: 1px solid #E6DFE9; background: #fff;
+    font: 600 13px 'Cairo', 'Inter', sans-serif; color: var(--text);
+}
+.lang-switch button:hover { border-color: var(--primary); color: var(--primary); }
+html[lang=ar] body, html[lang=ar] h1, html[lang=ar] h2, html[lang=ar] input, html[lang=ar] button,
+html[lang=ar] label, html[lang=ar] .brand, html[lang=ar] .btn { font-family: 'Cairo', sans-serif; }
+[dir=rtl] .avatar-edit { right: auto; left: 0; }
+[dir=rtl] .delete-form { text-align: right; }
+[dir=rtl] .top-nav a[title] i { transform: scaleX(-1); }

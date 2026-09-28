@@ -1,13 +1,13 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Fundraiser{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'projects/style.css' %}">
 </head>
@@ -18,27 +18,28 @@
 
             <form action="{% url 'search' %}" method="get" class="search" role="search">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="search" name="q" value="{{ query|default:'' }}" placeholder="Search campaigns or tags" aria-label="Search campaigns">
+                <input type="search" name="q" value="{{ query|default:'' }}" placeholder="{% translate 'Search campaigns or tags' %}" aria-label="{% translate 'Search campaigns' %}">
             </form>
 
-            <button type="button" class="menu-toggle" aria-label="Menu" aria-expanded="false" onclick="const open = document.body.classList.toggle('menu-open'); this.setAttribute('aria-expanded', open);">
+            <button type="button" class="menu-toggle" aria-label="{% translate 'Menu' %}" aria-expanded="false" onclick="const open = document.body.classList.toggle('menu-open'); this.setAttribute('aria-expanded', open);">
                 <i class="fa-solid fa-bars"></i>
             </button>
 
             <nav class="nav">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'my_projects' %}" class="nav-link{% if request.resolver_match.url_name == 'my_projects' %} active{% endif %}"><i class="fa-regular fa-folder-open"></i> My campaigns</a>
-                    <a href="{% url 'my_donations' %}" class="nav-link{% if request.resolver_match.url_name == 'my_donations' %} active{% endif %}"><i class="fa-regular fa-heart"></i> My donations</a>
+                    <a href="{% url 'my_projects' %}" class="nav-link{% if request.resolver_match.url_name == 'my_projects' %} active{% endif %}"><i class="fa-regular fa-folder-open"></i> {% translate "My campaigns" %}</a>
+                    <a href="{% url 'my_donations' %}" class="nav-link{% if request.resolver_match.url_name == 'my_donations' %} active{% endif %}"><i class="fa-regular fa-heart"></i> {% translate "My donations" %}</a>
                     <a href="{% url 'profile' %}" class="nav-link nav-user">
                         {% if user.profile.profile_picture %}<img src="{{ user.profile.profile_picture.url }}" alt="">{% else %}<span class="nav-avatar">{{ user.first_name|first|upper }}</span>{% endif %}
                         {{ user.first_name }}
                     </a>
-                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Start a campaign</a>
-                    <a href="{% url 'logout' %}" class="nav-link nav-logout" title="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i><span> Log out</span></a>
+                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> {% translate "Start a campaign" %}</a>
+                    <a href="{% url 'logout' %}" class="nav-link nav-logout" title="{% translate 'Log out' %}"><i class="fa-solid fa-arrow-right-from-bracket"></i><span> {% translate "Log out" %}</span></a>
                 {% else %}
-                    <a href="{% url 'auth_page' %}" class="nav-link">Log in</a>
-                    <a href="{% url 'auth_page' %}" class="btn btn-primary btn-sm">Start a campaign</a>
+                    <a href="{% url 'auth_page' %}" class="nav-link">{% translate "Log in" %}</a>
+                    <a href="{% url 'auth_page' %}" class="btn btn-primary btn-sm">{% translate "Start a campaign" %}</a>
                 {% endif %}
+                {% include 'main/_language_switch.html' %}
             </nav>
         </div>
     </header>
@@ -55,14 +56,14 @@
         <div class="footer-inner">
             <div>
                 <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><i class="fa-solid fa-hand-holding-heart"></i></span>Fundraiser</a>
-                <p class="muted">Crowdfunding for charity and community projects in Egypt.</p>
+                <p class="muted">{% translate "Crowdfunding for charity and community projects in Egypt." %}</p>
             </div>
             <div class="footer-links">
-                <a href="{% url 'home' %}">Home</a>
-                <a href="{% url 'search' %}">Browse campaigns</a>
-                <a href="{% if user.is_authenticated %}{% url 'project_create' %}{% else %}{% url 'auth_page' %}{% endif %}">Start a campaign</a>
+                <a href="{% url 'home' %}">{% translate "Home" %}</a>
+                <a href="{% url 'search' %}">{% translate "Browse campaigns" %}</a>
+                <a href="{% if user.is_authenticated %}{% url 'project_create' %}{% else %}{% url 'auth_page' %}{% endif %}">{% translate "Start a campaign" %}</a>
             </div>
-            <p class="muted footer-note">ITI Django project · Team 2</p>
+            <p class="muted footer-note">{% translate "ITI Django project · Team 2" %}</p>
         </div>
     </footer>
 

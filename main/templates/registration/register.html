@@ -1,121 +1,136 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register & Login</title>
+    <title>{% translate "Register & Login" %} · Fundraiser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'registration/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     {% csrf_token %}
+    <div class="auth-lang">{% include 'main/_language_switch.html' %}</div>
     <main class="auth-page">
 
         <!-- Registration -->
         <section id="registerPage" class="auth-card">
-            <h1>Create your account</h1>
-            <p class="subtitle">Join us and start making a difference.</p>
+            <h1>{% translate "Create your account" %}</h1>
+            <p class="subtitle">{% translate "Join us and start making a difference." %}</p>
 
             <div class="profile-upload">
                 <label for="profilePicture" class="profile-circle">
-                    <img id="profilePreview" alt="Profile preview">
+                    <img id="profilePreview" alt="{% translate 'Profile preview' %}">
                     <span id="profileIcon"><i class="fa-solid fa-circle-user"></i></span>
                     <span class="camera">+</span>
                 </label>
                 <input type="file" id="profilePicture" accept="image/*">
-                <p>Upload profile picture</p>
-                <small>JPG, PNG (Max 5MB)</small>
+                <p>{% translate "Upload profile picture" %}</p>
+                <small>{% translate "JPG, PNG (Max 5MB)" %}</small>
             </div>
 
             <form id="registerForm">
                 <div class="row">
                     <div class="field">
-                        <label>First Name <span>*</span></label>
-                        <input type="text" placeholder="Enter your first name" required>
+                        <label for="firstName">{% translate "First Name" %} <span>*</span></label>
+                        <input type="text" id="firstName" placeholder="{% translate 'Enter your first name' %}" required>
                     </div>
 
                     <div class="field">
-                        <label>Last Name <span>*</span></label>
-                        <input type="text" placeholder="Enter your last name" required>
+                        <label for="lastName">{% translate "Last Name" %} <span>*</span></label>
+                        <input type="text" id="lastName" placeholder="{% translate 'Enter your last name' %}" required>
                     </div>
                 </div>
 
                 <div class="field">
-                    <label>Email <span>*</span></label>
-                    <input id="email" type="email" placeholder="you@example.com" required>
+                    <label for="email">{% translate "Email" %} <span>*</span></label>
+                    <input id="email" type="email" placeholder="you@example.com" dir="ltr" required>
                     <small id="emailError" class="error"></small>
                 </div>
 
                 <div class="field">
-                    <label>Mobile Number <span>*</span></label>
-                    <div class="phone">
+                    <label for="mobileNumber">{% translate "Mobile Number" %} <span>*</span></label>
+                    <div class="phone" dir="ltr">
                         <select id="countryCode">
                             <option>+20</option>
                         </select>
-                        <input type="tel" id="mobileNumber" placeholder="e.g. 01012345678" maxlength="11" pattern="^(010|011|012|015)[0-9]{8}$" required>
+                        <input type="tel" id="mobileNumber" placeholder="{% translate 'e.g. 01012345678' %}" maxlength="11" pattern="^(010|011|012|015)[0-9]{8}$" required>
                     </div>
                     <small id="mobileError" class="error"></small>
                 </div>
 
                 <div class="row">
                     <div class="field">
-                        <label>Password <span>*</span></label>
+                        <label for="password">{% translate "Password" %} <span>*</span></label>
                         <div class="password">
-                            <input id="password" type="password" placeholder="Create a password" required>
-                            <button type="button" class="show-password" data-target="password">Show</button>
+                            <input id="password" type="password" placeholder="{% translate 'Create a password' %}" required>
+                            <button type="button" class="show-password" data-target="password">{% translate "Show" %}</button>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label>Confirm Password <span>*</span></label>
+                        <label for="confirmPassword">{% translate "Confirm Password" %} <span>*</span></label>
                         <div class="password">
-                            <input id="confirmPassword" type="password" placeholder="Confirm your password" required>
-                            <button type="button" class="show-password" data-target="confirmPassword">Show</button>
+                            <input id="confirmPassword" type="password" placeholder="{% translate 'Confirm your password' %}" required>
+                            <button type="button" class="show-password" data-target="confirmPassword">{% translate "Show" %}</button>
                         </div>
                         <small id="passwordError" class="error"></small>
                     </div>
                 </div>
 
-                <button class="main-button" type="submit">Create Account</button>
+                <button class="main-button" type="submit">{% translate "Create Account" %}</button>
             </form>
 
-            <p class="switch">Already have an account? <a href="#" id="loginLink">Log in</a></p>
+            <p class="switch">{% translate "Already have an account?" %} <a href="#" id="loginLink">{% translate "Log in" %}</a></p>
         </section>
 
         <!-- Login -->
         <section id="loginPage" class="auth-card hidden">
-            <h1>Welcome back!</h1>
-            <p class="subtitle">Log in to your account and continue making an impact.</p>
+            <h1>{% translate "Welcome back!" %}</h1>
+            <p class="subtitle">{% translate "Log in to your account and continue making an impact." %}</p>
 
             <form id="loginForm">
                 <div class="field">
-                    <label>Email <span>*</span></label>
-                    <input type="email" placeholder="you@example.com" required>
+                    <label for="loginEmail">{% translate "Email" %} <span>*</span></label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" dir="ltr" required>
                 </div>
 
                 <div class="field">
                     <div class="label-line">
-                        <label>Password <span>*</span></label>
-                        <a href="{% url 'password_reset' %}">Forgot password?</a>
+                        <label for="loginPassword">{% translate "Password" %} <span>*</span></label>
+                        <a href="{% url 'password_reset' %}">{% translate "Forgot password?" %}</a>
                     </div>
 
                     <div class="password">
-                        <input id="loginPassword" type="password" placeholder="Enter your password" required>
-                        <button type="button" class="show-password" data-target="loginPassword">Show</button>
+                        <input id="loginPassword" type="password" placeholder="{% translate 'Enter your password' %}" required>
+                        <button type="button" class="show-password" data-target="loginPassword">{% translate "Show" %}</button>
                     </div>
                 </div>
 
-                <button class="main-button" type="submit">Log In</button>
+                <button class="main-button" type="submit">{% translate "Log In" %}</button>
             </form>
 
-            <div class="divider"><span>OR</span></div>
+            <div class="divider"><span>{% translate "OR" %}</span></div>
 
-            <p class="switch">Don't have an account? <a href="#" id="registerLink">Sign up</a></p>
+            <p class="switch">{% translate "Don't have an account?" %} <a href="#" id="registerLink">{% translate "Sign up" %}</a></p>
         </section>
 
     </main>
 
+    {# Messages used by script.js, translated to the current language #}
+    <script>
+        window.I18N = {
+            show: "{% translate 'Show' as t %}{{ t|escapejs }}",
+            hide: "{% translate 'Hide' as t %}{{ t|escapejs }}",
+            pictureTooBig: "{% translate 'Profile picture must be smaller than 5MB.' as t %}{{ t|escapejs }}",
+            invalidEmail: "{% translate 'Please enter a valid email address.' as t %}{{ t|escapejs }}",
+            weakPassword: "{% translate 'Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a special character.' as t %}{{ t|escapejs }}",
+            passwordsDontMatch: "{% translate 'Passwords do not match.' as t %}{{ t|escapejs }}",
+            invalidMobile: "{% translate 'Enter a valid mobile number (e.g. 01012345678).' as t %}{{ t|escapejs }}",
+            somethingWrong: "{% translate 'Something went wrong. Please try again.' as t %}{{ t|escapejs }}",
+        };
+    </script>
     <script src="{% static 'registration/script.js' %}"></script>
     {% include 'chatbot/widget.html' %}
 </body>

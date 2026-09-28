@@ -255,3 +255,17 @@ input:focus, select:focus {
         gap: 0;
     }
 }
+
+/* ---------- Language switch & Arabic (right-to-left) ---------- */
+.auth-lang { position: fixed; top: 16px; right: 16px; z-index: 10; }
+.lang-switch button {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    padding: 7px 12px; border-radius: 8px; border: 1px solid #E6DFE9; background: #fff;
+    font: 600 13px 'Cairo', Arial, sans-serif; color: var(--text);
+}
+.lang-switch button:hover { border-color: var(--primary); color: var(--primary); }
+html[lang=ar] body, html[lang=ar] input, html[lang=ar] button, html[lang=ar] select { font-family: 'Cairo', Arial, sans-serif; }
+[dir=rtl] .auth-lang { right: auto; left: 16px; }
+[dir=rtl] .camera { right: auto; left: 3px; }
+[dir=rtl] .password input { padding-right: 12px; padding-left: 55px; }
+[dir=rtl] .show-password { right: auto; left: 8px; }

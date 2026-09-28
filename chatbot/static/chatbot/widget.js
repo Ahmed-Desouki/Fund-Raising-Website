@@ -25,8 +25,8 @@
         },
     };
 
-    let language = 'en';
-    try { language = localStorage.getItem('chatbotLanguage') || (document.documentElement.lang === 'ar' ? 'ar' : 'en'); } catch (e) {}
+    // Start in the site's language; the switch inside the chat can still change it
+    let language = document.documentElement.lang === 'ar' ? 'ar' : 'en';
     // Conversation sent back to the server on each turn (the API is stateless)
     let history = [];
 
@@ -56,7 +56,6 @@
 
     function setLanguage(lang) {
         language = lang;
-        try { localStorage.setItem('chatbotLanguage', lang); } catch (e) {}
         const s = STRINGS[lang];
         panel.dir = lang === 'ar' ? 'rtl' : 'ltr';
         panel.querySelector('[data-i18n=title]').textContent = s.title;

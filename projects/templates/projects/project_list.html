@@ -1,10 +1,11 @@
 {% extends 'projects/base.html' %}
+{% load i18n %}
 {% block title %}{{ heading }} · Fundraiser{% endblock %}
 {% block content %}
 <h1 class="page-title">{{ heading }}</h1>
-<p class="muted">{{ projects|length }} campaign{{ projects|length|pluralize }}</p>
+<p class="muted">{% blocktranslate trimmed count counter=projects|length %}{{ counter }} campaign{% plural %}{{ counter }} campaigns{% endblocktranslate %}</p>
 <div class="grid">
     {% for project in projects %}{% include 'projects/_card.html' %}
-    {% empty %}<p class="empty">No campaigns found.</p>{% endfor %}
+    {% empty %}<p class="empty">{% translate "No campaigns found." %}</p>{% endfor %}
 </div>
 {% endblock %}

@@ -1,43 +1,56 @@
 {% extends 'projects/base.html' %}
-{% block title %}Start a campaign · Fundraiser{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Start a campaign" %} · Fundraiser{% endblock %}
 {% block content %}
 <div class="narrow">
-    <h1 class="page-title">Start a campaign</h1>
-    <p class="muted">Tell people what you're raising money for. You can share the link as soon as it's published.</p>
+    <h1 class="page-title">{% translate "Start a campaign" %}</h1>
+    <p class="muted">{% translate "Tell people what you're raising money for. You can share the link as soon as it's published." %}</p>
 
     <form method="post" enctype="multipart/form-data" class="form">
         {% csrf_token %}
         {% for error in form.non_field_errors %}<p class="message error">{{ error }}</p>{% endfor %}
 
         <section class="form-card">
-            <h2>About your campaign</h2>
-            <p class="help">A clear title and story help people trust your campaign.</p>
+            <h2>{% translate "About your campaign" %}</h2>
+            <p class="help">{% translate "A clear title and story help people trust your campaign." %}</p>
             <div class="form">
                 <div class="field">
-                    <label for="id_title">Title</label>
-                    <input type="text" name="title" id="id_title" maxlength="200" value="{{ form.title.value|default:'' }}" placeholder="e.g. School supplies for 500 children" required>
+                    <label for="id_title">{% translate "Title" %}</label>
+                    <input type="text" name="title" id="id_title" maxlength="200" value="{{ form.title.value|default:'' }}" placeholder="{% translate 'e.g. School supplies for 500 children' %}" required>
                     {% for error in form.title.errors %}<small class="error">{{ error }}</small>{% endfor %}
                 </div>
                 <div class="field">
-                    <label for="id_details">Story</label>
-                    <textarea name="details" id="id_details" rows="7" placeholder="Who is this for, what will the money be spent on, and why does it matter?" required>{{ form.details.value|default:'' }}</textarea>
+                    <label for="id_details">{% translate "Story" %}</label>
+                    <textarea name="details" id="id_details" rows="7" placeholder="{% translate 'Who is this for, what will the money be spent on, and why does it matter?' %}" required>{{ form.details.value|default:'' }}</textarea>
                     {% for error in form.details.errors %}<small class="error">{{ error }}</small>{% endfor %}
                 </div>
+                <details class="arabic-version" {% if form.title_ar.value or form.details_ar.value %}open{% endif %}>
+                    <summary>{% translate "Add an Arabic version (optional)" %}</summary>
+                    <p class="help">{% translate "Visitors who use the site in Arabic will see this text instead." %}</p>
+                    <div class="field">
+                        <label for="id_title_ar">{% translate "Title in Arabic" %}</label>
+                        <input type="text" name="title_ar" id="id_title_ar" maxlength="200" dir="rtl" lang="ar" value="{{ form.title_ar.value|default:'' }}">
+                    </div>
+                    <div class="field">
+                        <label for="id_details_ar">{% translate "Story in Arabic" %}</label>
+                        <textarea name="details_ar" id="id_details_ar" rows="6" dir="rtl" lang="ar">{{ form.details_ar.value|default:'' }}</textarea>
+                    </div>
+                </details>
                 <div class="form-row">
                     <div class="field">
-                        <label for="id_category">Category</label>
+                        <label for="id_category">{% translate "Category" %}</label>
                         <select name="category" id="id_category" required>
-                            <option value="">Choose a category</option>
+                            <option value="">{% translate "Choose a category" %}</option>
                             {% for value, label in form.fields.category.choices %}{% if value %}
-                                <option value="{{ value }}" {% if form.category.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{{ label }}</option>
+                                <option value="{{ value }}" {% if form.category.value|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{% translate label %}</option>
                             {% endif %}{% endfor %}
                         </select>
                         {% for error in form.category.errors %}<small class="error">{{ error }}</small>{% endfor %}
                     </div>
                     <div class="field">
-                        <label for="id_tags">Tags</label>
-                        <input type="text" name="tags" id="id_tags" value="{{ form.tags.value|default:'' }}" placeholder="health, children">
-                        <small class="help">Separate with commas. Used for search and similar campaigns.</small>
+                        <label for="id_tags">{% translate "Tags" %}</label>
+                        <input type="text" name="tags" id="id_tags" value="{{ form.tags.value|default:'' }}" placeholder="{% translate 'health, children' %}">
+                        <small class="help">{% translate "Separate with commas. Used for search and similar campaigns." %}</small>
                         {% for error in form.tags.errors %}<small class="error">{{ error }}</small>{% endfor %}
                     </div>
                 </div>
@@ -45,24 +58,24 @@
         </section>
 
         <section class="form-card">
-            <h2>Goal and dates</h2>
+            <h2>{% translate "Goal and dates" %}</h2>
             <div class="form">
                 <div class="field">
-                    <label for="id_total_target">Target amount</label>
+                    <label for="id_total_target">{% translate "Target amount" %}</label>
                     <div class="input-prefix">
-                        <span>EGP</span>
+                        <span>{% translate "EGP" %}</span>
                         <input type="number" name="total_target" id="id_total_target" min="1" step="0.01" value="{{ form.total_target.value|default:'' }}" placeholder="250000" required>
                     </div>
                     {% for error in form.total_target.errors %}<small class="error">{{ error }}</small>{% endfor %}
                 </div>
                 <div class="form-row">
                     <div class="field">
-                        <label for="id_start_time">Starts</label>
+                        <label for="id_start_time">{% translate "Starts" %}</label>
                         <input type="datetime-local" name="start_time" id="id_start_time" value="{{ form.start_time.value|default:''|slice:':16' }}" required>
                         {% for error in form.start_time.errors %}<small class="error">{{ error }}</small>{% endfor %}
                     </div>
                     <div class="field">
-                        <label for="id_end_time">Ends</label>
+                        <label for="id_end_time">{% translate "Ends" %}</label>
                         <input type="datetime-local" name="end_time" id="id_end_time" value="{{ form.end_time.value|default:''|slice:':16' }}" required>
                         {% for error in form.end_time.errors %}<small class="error">{{ error }}</small>{% endfor %}
                     </div>
@@ -71,8 +84,8 @@
         </section>
 
         <section class="form-card">
-            <h2>Pictures</h2>
-            <p class="help">Add one or more photos. The first one is used as the cover.</p>
+            <h2>{% translate "Pictures" %}</h2>
+            <p class="help">{% translate "Add one or more photos. The first one is used as the cover." %}</p>
             <div class="field">
                 <input type="file" name="images" id="id_images" accept="image/*" multiple required>
                 {% for error in form.images.errors %}<small class="error">{{ error }}</small>{% endfor %}
@@ -80,8 +93,8 @@
         </section>
 
         <div class="form-actions">
-            <a href="{% url 'home' %}" class="btn btn-outline">Cancel</a>
-            <button type="submit" class="btn btn-primary">Publish campaign</button>
+            <a href="{% url 'home' %}" class="btn btn-outline">{% translate "Cancel" %}</a>
+            <button type="submit" class="btn btn-primary">{% translate "Publish campaign" %}</button>
         </div>
     </form>
 </div>

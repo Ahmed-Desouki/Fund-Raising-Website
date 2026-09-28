@@ -329,3 +329,49 @@ input[type=file] { font: 14px 'Inter', sans-serif; padding: 14px; border: 1px da
     .card-meta span:last-child { display: none; }
     .slide-progress .progress { flex-basis: 120px; }
 }
+
+/* ---------- Language switch ---------- */
+.lang-switch { margin: 0; }
+.lang-switch button {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--white);
+    font: 600 13px 'Cairo', 'Inter', sans-serif; color: var(--text);
+}
+.lang-switch button:hover { border-color: var(--primary); color: var(--primary); }
+.lang-switch i { color: var(--muted); }
+
+/* ---------- Arabic (right-to-left) ---------- */
+/* Inter and Fraunces have no Arabic letters, so Arabic pages use Cairo throughout */
+html[lang=ar] body, html[lang=ar] .btn, html[lang=ar] input, html[lang=ar] select, html[lang=ar] textarea,
+html[lang=ar] h1, html[lang=ar] h2, html[lang=ar] h3, html[lang=ar] .brand, html[lang=ar] .hero-stats dd,
+html[lang=ar] .raised strong, html[lang=ar] .stats strong, html[lang=ar] .search input[type=search] {
+    font-family: 'Cairo', sans-serif;
+}
+html[lang=ar] .hero h1 em { font-style: normal; }
+html[lang=ar] .card-cat, html[lang=ar] .eyebrow { letter-spacing: 0; }
+
+[dir=rtl] .nav, [dir=rtl] .menu-toggle { margin-left: 0; margin-right: auto; }
+[dir=rtl] .search i { left: auto; right: 14px; }
+[dir=rtl] .search input[type=search] { padding: 9px 38px 9px 14px; }
+[dir=rtl] .input-prefix span { left: auto; right: 13px; }
+[dir=rtl] .input-prefix input { padding-left: 13px !important; padding-right: 52px !important; }
+[dir=rtl] .hero::after { right: auto; left: -80px; }
+[dir=rtl] .slide::after { background: linear-gradient(270deg, rgba(11, 11, 26, .85) 0%, rgba(11, 11, 26, .35) 60%, transparent 100%); }
+[dir=rtl] .slide-text { left: auto; right: 72px; }
+[dir=rtl] .slide-btn.prev { left: auto; right: 16px; }
+[dir=rtl] .slide-btn.next { right: auto; left: 16px; }
+[dir=rtl] .slide-btn i, [dir=rtl] .flip-rtl, [dir=rtl] .nav-logout i { transform: scaleX(-1); }
+[dir=rtl] .card-img .card-cat { left: auto; right: 10px; }
+[dir=rtl] .badge { right: auto; left: 10px; }
+[dir=rtl] .comment.reply { margin: 10px 24px 0 0; }
+[dir=rtl] .table th, [dir=rtl] .table td { text-align: right; }
+@media (max-width: 860px) {
+    [dir=rtl] .slide-text { right: 24px; left: 24px; }
+}
+
+/* Optional Arabic version of a campaign on the create form */
+.arabic-version { border: 1px dashed var(--border); border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+.arabic-version[open] { background: var(--background); }
+.arabic-version summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--primary); }
+.arabic-version .field { margin-top: 12px; }
+.arabic-version input, .arabic-version textarea { font-family: 'Cairo', sans-serif; }

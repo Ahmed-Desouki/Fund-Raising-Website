@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg, Sum
 from django.urls import reverse
+from django.utils.translation import get_language
 from django.utils import timezone
 
 
@@ -46,6 +47,9 @@ class Project(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
     title = models.CharField(max_length=200)
     details = models.TextField()
+    # Optional Arabic version of the campaign text, shown when the site is in Arabic
+    title_ar = models.CharField(max_length=200, blank=True)
+    details_ar = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='projects')
     tags = models.ManyToManyField(Tag, blank=True, related_name='projects')
     total_target = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal('1'))])
@@ -65,6 +69,17 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse('project_detail', args=[self.pk])
+
+    def _in_current_language(self, english, arabic):
+        return arabic if arabic and (get_language() or '').startswith('ar') else english
+
+    @property
+    def display_title(self):
+        return self._in_current_language(self.title, self.title_ar)
+
+    @property
+    def display_details(self):
+        return self._in_current_language(self.details, self.details_ar)
 
     @property
     def total_donations(self):

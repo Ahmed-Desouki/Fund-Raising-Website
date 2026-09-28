@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from .models import Category, Donation, Project, ProjectImage, Tag
 
@@ -22,13 +23,13 @@ class MultipleImageField(forms.ImageField):
 class ProjectForm(forms.ModelForm):
     tags = forms.CharField(
         required=False,
-        help_text='Separate tags with commas, e.g. health, children, education',
+        help_text=_('Separate tags with commas, e.g. health, children, education'),
     )
     images = MultipleImageField(required=True)
 
     class Meta:
         model = Project
-        fields = ['title', 'details', 'category', 'total_target', 'start_time', 'end_time']
+        fields = ['title', 'details', 'title_ar', 'details_ar', 'category', 'total_target', 'start_time', 'end_time']
         widgets = {
             'details': forms.Textarea(attrs={'rows': 6}),
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -48,7 +49,7 @@ class ProjectForm(forms.ModelForm):
         cleaned_data = super().clean()
         start, end = cleaned_data.get('start_time'), cleaned_data.get('end_time')
         if start and end and end <= start:
-            self.add_error('end_time', 'End time must be after the start time.')
+            self.add_error('end_time', _('End time must be after the start time.'))
         return cleaned_data
 
     def save(self, owner):

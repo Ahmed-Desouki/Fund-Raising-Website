@@ -1,0 +1,11 @@
+{% load i18n %}
+{# Switches between English and Arabic and comes back to the same page #}
+<form action="{% url 'set_language' %}" method="post" class="lang-switch">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    {% if LANGUAGE_CODE == 'ar' %}
+        <button type="submit" name="language" value="en" lang="en" title="Switch to English"><i class="fa-solid fa-globe"></i> English</button>
+    {% else %}
+        <button type="submit" name="language" value="ar" lang="ar" title="التحويل للعربية"><i class="fa-solid fa-globe"></i> عربي</button>
+    {% endif %}
+</form>

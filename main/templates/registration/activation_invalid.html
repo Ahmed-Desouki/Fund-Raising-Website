@@ -1,17 +1,19 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
-    <title>Activation Failed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% translate "Activation failed" %} · Fundraiser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'registration/style.css' %}">
 </head>
 <body>
     <main class="auth-page">
         <section class="auth-card">
-            <h1>Activation link is invalid or expired</h1>
-            <p class="subtitle">Please register again to receive a new activation link.</p>
-            <a class="main-button" href="{% url 'auth_page' %}">Back to registration</a>
+            <h1>{% translate "Activation link is invalid or expired" %}</h1>
+            <p class="subtitle">{% translate "Please register again to receive a new activation link." %}</p>
+            <a class="main-button" href="{% url 'auth_page' %}">{% translate "Back to registration" %}</a>
         </section>
     </main>
 </body>

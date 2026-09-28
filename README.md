@@ -1,6 +1,6 @@
 # Fundraiser: Crowdfunding Platform for Egypt
 
-ITI Django final project (team 2). People can start fundraising campaigns for charity and community projects, and others can donate, rate, and comment. A help chatbot answers in Arabic or English.
+ITI Django final project (team 2). People can start fundraising campaigns for charity and community projects, and others can donate, rate, and comment. The whole site works in **Arabic and English**, and a help chatbot answers in both.
 
 ## Features
 
@@ -24,6 +24,11 @@ ITI Django final project (team 2). People can start fundraising campaigns for ch
 - Slider of the 5 highest-rated running campaigns
 - Latest 5 campaigns, latest 5 featured campaigns (chosen by the admin), categories
 - Search by title or tag
+
+**Arabic / English**
+- Switch in the header (عربي / English); Arabic pages are right-to-left with an Arabic font
+- Campaigns can have an optional Arabic title and story, shown to Arabic visitors
+- Translations live in `locale/ar/LC_MESSAGES/django.po`
 
 **Help chatbot** (`chatbot` app)
 - Chat button on every page, with an **عربي / English** switch
@@ -66,6 +71,7 @@ python manage.py runserver
 Open http://127.0.0.1:8000
 
 The demo accounts' password is `DEMO_PASSWORD` in `projects/management/commands/seed_demo.py`.
+`seed_demo --reset` recreates the 8 demo campaigns. They are realistic examples, not real fundraisers; their photos are real, freely licensed pictures from Wikimedia Commons (credits in `projects/demo_images/CREDITS.md`).
 
 ### Activation emails
 
@@ -99,6 +105,16 @@ Go to http://127.0.0.1:8000/admin with a superuser to:
 - tick **Featured** on campaigns to show them on the home page
 - review reported campaigns and comments
 
+## Translations
+
+After changing text in a template, add its Arabic translation to `locale/ar/LC_MESSAGES/django.po`, then compile it:
+
+```bash
+python manage.py compile_translations
+```
+
+This works without installing GNU gettext. Wrap new text in `{% translate "..." %}` in templates, or `_("...")` in Python.
+
 ## Project structure
 
 ```
@@ -106,6 +122,7 @@ myproject/   settings and root URLs
 main/        registration, activation, login, profile
 projects/    campaigns, donations, comments, ratings, reports, home page, search
 chatbot/     help chatbot (Gemini) and its chat widget
+locale/      Arabic translations
 docs/ERD.md  database diagram
 ```
 
